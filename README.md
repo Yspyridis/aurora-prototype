@@ -1,17 +1,14 @@
 # 🌌 AURORA
 
-*Augmented University Research & Opportunity Realisation Assistant*
+*Augmented University Research and Opportunity Realisation Assistant*
 
-Tell it a business challenge (or hand it a research article), and it maps out where things stand today, goes digging through Kingston's own research for something genuinely useful, and builds you a Future Value Proposition out of the two. No magic. Just an LLM, a research API, and a healthy suspicion of its own citations.
+Give a business challenge and Aurora maps out where things stand today, searches through Kingston's own research for appropriate papers, and builds a Future Value Proposition. Uses LLMs, a search agent, a research API, and a healthy suspicion of its own citations.
 
 ## Running it
 
-One HTML file. Open it, drop your own [Gemini API key](https://aistudio.google.com/apikey) in the top bar, and start typing. Nothing gets saved, nothing goes anywhere except Google and OpenAlex.
+For now you need to use your own [Gemini API key](https://aistudio.google.com/apikey) in the top bar, and start typing. Nothing gets saved, nothing goes anywhere except Google and the paper reserach API.
 
 ## What this is not
 
-Finished. This is a working prototype, not a promise. Read everything it tells you like a first draft, because that's exactly what it is.
+This is an early working prototype. Read everything it tells you like a first draft only.
 
----
-
-Built by Dr Evy Sakellariou and Dr Yannis Spyridis, Kingston University London.
