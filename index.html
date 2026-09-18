@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AURORA — Prototype</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.12.2/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.3/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<style>
+  :root{
+    --bg:#FFFFFF; --bg-alt:#F7F7FA; --surface:#FFFFFF; --surface-2:#EFEFF5;
+    --border:#E3E3EC; --border-soft:#ECECF2;
+    --text:#14141C; --text-muted:#5C5C74; --text-faint:#9A9AAE;
+    --a1:#34E0A1; --a2:#8B6CFF; --a3:#3E8FFF;
+    --a1-ink:#0E9A6C; --a2-ink:#6D46E8;
+    --grad: linear-gradient(90deg, var(--a1), var(--a2) 55%, var(--a3));
+    --grad-soft: linear-gradient(135deg, rgba(52,224,161,.16), rgba(139,108,255,.16) 55%, rgba(62,143,255,.16));
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{background:var(--bg); color:var(--text); font-family:'Inter',sans-serif;}
+  .disp{font-family:'Space Grotesk',sans-serif;}
+  svg{display:block;}
+  .icon{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+
+  .app{max-width:none;margin:0;padding:0;height:100vh;}
+  .frame{border:none;border-radius:0;overflow:hidden;background:var(--bg-alt);height:100%;display:flex;flex-direction:column;}
+
+  .topnav{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--border-soft);flex-wrap:wrap;gap:10px;}
+  .brand{display:flex;align-items:center;gap:9px;cursor:pointer;}
+  .orb{width:22px;height:22px;border-radius:50%;background:conic-gradient(from 200deg,var(--a1),var(--a2),var(--a3),var(--a1));flex:none;}
+  .brand-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;letter-spacing:-.01em;}
+  .crumb{font-size:12px;color:var(--text-faint);margin-left:6px;}
+  .crumb b{color:var(--text-muted);font-weight:500;}
+  .navright{display:flex;align-items:center;gap:12px;}
+  .pill-btn{font-size:12px;font-weight:600;padding:7px 14px;border-radius:18px;background:var(--text);color:var(--bg);display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:none;}
+  .pill-btn.outline{background:transparent;color:var(--text-muted);border:1px solid var(--border);}
+  .avatar{width:24px;height:24px;border-radius:50%;background:var(--grad);}
+
+  /* ---- Body: persistent sidebar + swappable main content ---- */
+  .body-row{display:flex;flex:1;min-height:0;}
+  .sidebar{
+    --bg:#08080C; --bg-alt:#0E0E15; --surface:#131320; --surface-2:#1B1B2A;
+    --border:#25253A; --border-soft:#1B1B2C;
+    --text:#F3F3F7; --text-muted:#9A9AB0; --text-faint:#5C5C74;
+    background:var(--bg);width:212px;flex:none;transition:width .18s ease;overflow:hidden;padding:16px 14px;border-right:1px solid var(--border-soft);display:flex;flex-direction:column;
+  }
+  .sidebar-spacer{flex:1;}
+
+  /* ---- Bright landing page (Home only) ---- */
+  .hero-bright{position:relative;height:100%;min-height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#FAFAFC;padding:60px 24px;}
+  .hero-bright .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.6;}
+  .hero-bright .blob1{width:520px;height:520px;background:radial-gradient(circle,#22E6A3,transparent 70%);top:-100px;left:-80px;}
+  .hero-bright .blob2{width:560px;height:560px;background:radial-gradient(circle,#A855F7,transparent 70%);bottom:-180px;left:18%;}
+  .hero-bright .blob3{width:520px;height:520px;background:radial-gradient(circle,#3B82F6,transparent 70%);bottom:-140px;right:-100px;}
+  .hero-bright .blob4{width:400px;height:400px;background:radial-gradient(circle,#EC4899,transparent 70%);top:6%;right:8%;opacity:.45;}
+  .hero-bright-inner{position:relative;z-index:1;max-width:640px;width:100%;text-align:center;}
+  .hero-bright-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:38px;line-height:1.22;color:#14141C;margin:0 0 34px;letter-spacing:-.01em;}
+
+  .prompt-card{display:flex;align-items:flex-end;gap:6px;background:#FFFFFF;border-radius:26px;padding:12px 12px 12px 14px;box-shadow:0 20px 50px rgba(20,20,30,.14),0 2px 8px rgba(20,20,30,.06);border:1px solid rgba(20,20,30,.06);}
+  @keyframes shakeX{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+  .prompt-card.shake{animation:shakeX .4s ease;}
+  @keyframes viewExitExpand{from{opacity:1;transform:scale(1);}to{opacity:0;transform:scale(1.04);}}
+  @keyframes viewEnterExpand{from{opacity:0;transform:scale(.97);}to{opacity:1;transform:scale(1);}}
+  .view-exiting{animation:viewExitExpand .26s ease forwards;}
+  .view-entering{animation:viewEnterExpand .34s ease forwards;}
+  .prompt-add-btn{width:38px;height:38px;border-radius:50%;border:none;background:#F2F2F6;color:#5C5C74;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;transition:background .12s ease;padding:0;}
+  .prompt-add-btn:hover{background:#E7E7F0;}
+  .prompt-textarea{flex:1;border:none;outline:none;resize:none;background:transparent;font-family:'Inter',sans-serif;font-size:14.5px;color:#14141C;padding:16px 6px;min-height:24px;max-height:180px;line-height:1.5;}
+  .prompt-textarea::placeholder{color:#9A9AAE;}
+  .prompt-mode-dropdown{border:none;background:#F2F2F6;color:#4A4A5E;font-family:inherit;font-size:12px;font-weight:600;padding:8px 26px 8px 12px;border-radius:16px;cursor:pointer;appearance:none;-webkit-appearance:none;white-space:nowrap;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A4A5E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:12px;flex:none;}
+  .prompt-send-btn{width:38px;height:38px;border-radius:50%;border:none;background:#14141C;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;transition:transform .1s ease;padding:0;}
+  .prompt-send-btn:hover{transform:scale(1.06);}
+  .prompt-file-status{text-align:center;margin-top:12px;font-size:11.5px;color:#6B6B80;min-height:14px;}
+  .hero-credit-bright{position:absolute;left:0;right:0;bottom:26px;text-align:center;z-index:1;}
+  .hero-credit-line1{font-size:11.5px;color:#6B6B80;font-weight:600;}
+  .hero-credit-line2{font-size:11px;color:#9A9AAE;margin-top:3px;}
+  .sidebar.collapsed{width:56px;padding:16px 8px;}
+  .sidebar-head{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+  .sidebar.collapsed .sidebar-head{justify-content:center;}
+  .sidebar-toggle{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--text-muted);flex:none;cursor:pointer;}
+  .sidebar-toggle .icon{width:13px;height:13px;transition:transform .18s ease;}
+  .sidebar:not(.collapsed) .sidebar-toggle .icon{transform:rotate(180deg);}
+  .pane-label-text{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);white-space:nowrap;}
+  .sidebar.collapsed .pane-label-text{display:none;}
+
+  .nav-item{display:flex;align-items:center;gap:11px;padding:8px 9px;border-radius:8px;font-size:12.5px;color:var(--text-muted);margin-bottom:2px;white-space:nowrap;cursor:pointer;}
+  .nav-item .icon{color:var(--text-faint);}
+  .sidebar.collapsed .nav-item{justify-content:center;padding:9px 0;}
+  .sidebar.collapsed .nlabel{display:none;}
+  .nav-item.stub{opacity:.5;cursor:default;}
+  .nav-item.current{background:var(--surface-2);color:var(--text);position:relative;}
+  .nav-item.current::before{content:"";position:absolute;left:-6px;top:6px;bottom:6px;width:3px;border-radius:3px;background:var(--grad);}
+  .sidebar.collapsed .nav-item.current::before{left:-2px;}
+  .nav-item.current .icon{color:var(--a2);}
+  .nav-div{height:1px;background:var(--border-soft);margin:10px 2px;}
+
+  .main{flex:1;min-width:0;overflow:auto;background:var(--bg);color:var(--text);}
+  .view{display:none;}
+  .view.active{display:block;height:100%;}
+  .pad{padding:26px;}
+
+  /* ---- workspace two-pane (conversation + live workspace) ---- */
+  .two-pane{display:flex;min-height:100%;}
+  .pane{padding:16px;min-width:0;}
+  .pane-convo{flex:1;background:var(--bg-alt);display:flex;flex-direction:column;border-right:1px solid var(--border-soft);position:relative;}
+  .validation-toast{position:absolute;top:10px;left:16px;right:16px;z-index:10;background:#FDEEEC;border:1px solid #F1B3A8;color:#C6493A;font-size:11.5px;padding:10px 14px;border-radius:8px;opacity:0;transform:translateY(-6px);transition:opacity .2s ease,transform .2s ease;pointer-events:none;}
+  .validation-toast.show{opacity:1;transform:translateY(0);}
+  .pane-live{flex:1.1;background:var(--bg);display:none;}
+  .two-pane.live-on .pane-live{display:block;}
+  .two-pane:not(.live-on) .pane-convo{border-right:none;}
+  .pane-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-bottom:14px;}
+  .pane-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .pane-label-row .pane-label{margin-bottom:0;}
+  .lw-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+  .lw-toggle-text{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint);}
+  .lw-switch{position:relative;width:32px;height:18px;flex:none;}
+  .lw-switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+  .lw-knob{position:absolute;inset:0;background:var(--surface-2);border:1px solid var(--border);border-radius:20px;transition:background .15s ease,border-color .15s ease;pointer-events:none;}
+  .lw-knob::before{content:"";position:absolute;width:12px;height:12px;left:2px;top:2px;background:var(--text-faint);border-radius:50%;transition:transform .15s ease,background .15s ease;}
+  .lw-switch input:checked ~ .lw-knob{background:var(--grad);border-color:transparent;}
+  .lw-switch input:checked ~ .lw-knob::before{transform:translateX(14px);background:#06060A;}
+
+  @keyframes msgIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .challenge-textarea{width:100%;margin-top:10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:12px;line-height:1.5;padding:10px;resize:vertical;}
+  .upload-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .upload-btn{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;}
+  .upload-btn:hover{border-color:var(--a2);color:var(--text);}
+  .upload-status{font-size:10.5px;color:var(--text-faint);}
+  .key-input{width:100%;margin-top:8px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:12px;padding:9px 10px;}
+  .key-hint{font-size:10px;color:var(--text-faint);margin-top:5px;}
+  .nav-key{width:150px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:11px;padding:7px 9px;}
+  .nav-model{width:170px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:11px;padding:7px 9px;appearance:none;-webkit-appearance:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235C5C74' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:12px;padding-right:24px;cursor:pointer;}
+  .model-select{width:100%;margin-top:8px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:12px;padding:9px 10px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235C5C74' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:14px;padding-right:30px;cursor:pointer;}
+  .log-msg{font-size:11.5px;color:var(--text-faint);display:flex;align-items:flex-start;gap:8px;margin:9px 0;line-height:1.5;}
+  .log-msg .dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex:none;margin-top:4px;}
+  .log-msg.done{color:var(--text-muted);}
+  .log-msg.done .dot{background:var(--grad);}
+  .log-msg.error{color:#E0796B;}
+  .log-msg.error .dot{background:#E0796B;}
+  .msg{max-width:92%;margin-bottom:18px;opacity:0;animation:msgIn .5s ease forwards;}
+  .msg.ai{align-self:flex-start;max-width:100%;width:100%;}
+  .msg.user{align-self:flex-end;max-width:80%;}
+  .msg .bubble{font-size:13px;line-height:1.65;}
+  .msg.ai .bubble{background:transparent;border:none;color:var(--text);padding:0;}
+  .msg.user .bubble{background:var(--surface-2);border:none;color:var(--text);border-radius:18px;padding:10px 16px;font-size:12.5px;line-height:1.5;}
+  .msg .step-tag{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--a2-ink);margin-bottom:5px;display:block;font-weight:600;}
+  .upload-chip{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:10.5px;color:var(--text-muted);margin-top:7px;background:var(--bg-alt);}
+  .upload-chip .icon{color:var(--a1-ink);}
+  .mini-field{margin-top:12px;}
+  .mini-label{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--a2-ink);display:block;margin-bottom:4px;font-weight:700;}
+
+  .checklist{margin:8px 0 2px;font-size:12px;}
+  .checklist li{list-style:none;margin-bottom:7px;display:flex;align-items:center;gap:8px;color:var(--text-muted);}
+  .checklist .mark{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);flex:none;display:flex;align-items:center;justify-content:center;}
+  .checklist li.done .mark{background:var(--grad);border-color:transparent;}
+  .checklist li.done .mark .icon{width:8px;height:8px;stroke:#06060A;stroke-width:3;}
+  .checklist li.pending .mark{border-style:dashed;}
+
+  .quick-reply-row{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;}
+  .qr-chip{font-size:11px;padding:6px 11px;border-radius:14px;border:1px solid var(--border);color:var(--text-muted);cursor:default;}
+  .qr-chip.primary{background:var(--grad);color:#06060A;border-color:transparent;font-weight:600;}
+  .qr-chip.action{cursor:pointer;}
+
+  .convo-input-bar{margin-top:auto;display:flex;align-items:center;gap:8px;background:#FFFFFF;border:1px solid var(--border);border-radius:24px;padding:8px 8px 8px 16px;box-shadow:0 8px 24px rgba(20,20,30,.06);}
+  .convo-input-add{width:32px;height:32px;border-radius:50%;border:none;background:var(--surface-2);color:var(--text-muted);display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer;}
+  .convo-input-add:hover{background:#E7E7F0;}
+  .convo-input-text{flex:1;font-size:12.5px;color:var(--text-faint);cursor:text;}
+  .convo-input-send{width:32px;height:32px;border-radius:50%;border:none;background:#14141C;color:#fff;display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer;}
+  .convo-input-send:hover{transform:scale(1.06);}
+
+  .live-tabs{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;}
+  .live-tab{font-size:10px;padding:6px 9px;border-radius:14px;border:1px solid var(--border);color:var(--text-faint);cursor:pointer;}
+  .live-tab.active{border-color:transparent;background:var(--grad);color:#06060A;font-weight:600;}
+  .live-panel{display:none;}
+  .live-panel.active{display:block;}
+
+  .canvas-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  .canvas-cell{border:1px solid var(--border);border-radius:10px;padding:11px;background:var(--surface);}
+  .canvas-cell h4{margin:0 0 8px;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint);font-weight:600;}
+  .line{height:7px;background:var(--surface-2);border-radius:3px;margin:6px 0;}
+  .line.w60{width:60%;} .line.w80{width:80%;} .line.w40{width:40%;} .line.w90{width:90%;}
+  .real-list{margin:0;padding-left:15px;font-size:11px;color:var(--text-muted);line-height:1.55;}
+  .real-list li{margin-bottom:4px;}
+  @keyframes thinkPulse{0%,100%{opacity:.45;}50%{opacity:1;}}
+  .thinking{animation:thinkPulse 1.3s ease-in-out infinite;color:var(--text-faint);}
+  .workspace-hint{display:block;margin-top:6px;font-size:11px;color:var(--text-faint);}
+  .paper-list{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+  .paper-list-rest{display:none;flex-direction:column;gap:8px;margin-top:8px;}
+  .paper-expand-toggle{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:var(--text-faint);cursor:pointer;user-select:none;}
+  .paper-expand-toggle:hover{color:var(--a2-ink);}
+  .paper-expand-toggle .expand-chevron{width:12px;height:12px;transition:transform .15s ease;}
+  .paper-expand-toggle.open .expand-chevron{transform:rotate(90deg);}
+  .paper-option{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface);transition:border-color .12s ease,box-shadow .12s ease;}
+  .paper-select-row{margin-top:9px;}
+  .paper-option.recommended{border-color:var(--a2);}
+  .paper-option.active{border-color:var(--a1);box-shadow:0 0 0 1px var(--a1);}
+  .paper-option h5{margin:0 0 4px;font-size:12px;font-weight:600;line-height:1.4;}
+  .paper-option .paper-meta{font-size:10px;color:var(--text-faint);margin-bottom:4px;}
+  .paper-option .paper-snippet{font-size:10.5px;color:var(--text-muted);line-height:1.45;}
+  .paper-badge{display:inline-block;font-size:9px;font-weight:700;background:var(--grad);color:#06060A;padding:2px 7px;border-radius:8px;margin-left:6px;vertical-align:middle;}
+  .active-badge{display:inline-block;font-size:9px;font-weight:700;color:var(--a1-ink);border:1px solid var(--a1-ink);padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;}
+
+  .research-card{border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:13px;background:var(--surface);}
+  .jrnl{font-size:9px;font-weight:700;letter-spacing:.04em;background:var(--grad);color:#06060A;padding:3px 7px;border-radius:5px;margin-bottom:9px;display:inline-block;}
+  .impl-box{border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:9px;background:var(--surface);}
+  .impl-box h4{margin:0 0 6px;font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--text-faint);font-weight:600;}
+  .caption{font-size:10px;color:var(--text-faint);}
+
+  /* ---- FVPC ---- */
+  .fvpc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
+  .fvpc-head h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:21px;}
+  .fvpc-head p{margin:4px 0 0;font-size:12px;color:var(--text-faint);}
+  .seg-tabs{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;flex:none;}
+  .seg-tab{font-size:11.5px;padding:6px 14px;border-radius:7px;color:var(--text-muted);cursor:pointer;}
+  .seg-tab.active{background:var(--grad);color:#06060A;font-weight:600;}
+
+  .fvpc-flow{max-width:520px;margin:0 auto;}
+  .fvpc-step{border:1px solid var(--border);border-radius:12px;padding:15px 17px;display:flex;gap:15px;align-items:flex-start;background:var(--surface);opacity:0;animation:msgIn .5s ease forwards;}
+  .fvpc-why{margin-top:7px;font-size:10.5px;color:var(--text-faint);line-height:1.5;}
+  .fvpc-why b,.fvpc-why .why-label{color:var(--a2-ink);font-weight:600;}
+  .fvpc-num{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:700;width:28px;height:28px;border-radius:50%;background:var(--grad);color:#06060A;display:flex;align-items:center;justify-content:center;flex:none;}
+  .fvpc-step h4{margin:0 0 5px;font-size:14px;}
+  .fvpc-connector{width:2px;height:24px;margin:0 auto;background:linear-gradient(var(--a2),var(--a3));opacity:.5;}
+  .fvpc-actions{display:flex;justify-content:center;gap:10px;margin-top:28px;flex-wrap:wrap;}
+  .export-chip{font-size:11px;border:1px solid var(--border);border-radius:18px;padding:8px 13px;color:var(--text-muted);display:flex;align-items:center;gap:6px;transition:border-color .12s ease,color .12s ease;}
+  .export-chip:hover{border-color:var(--a2);color:var(--text);}
+
+  .template-card{border:1px solid var(--border);border-radius:14px;padding:24px;background:var(--surface);max-width:680px;margin:0 auto;}
+  .template-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+  .template-brand{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:var(--text-muted);}
+  .template-now-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint);font-weight:700;margin-bottom:9px;}
+  .template-now-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+  .template-now-cell{border:1px dashed var(--border);border-radius:8px;padding:8px 10px;background:var(--bg-alt);}
+  .template-now-cell h6{margin:0 0 5px;font-size:9px;text-transform:uppercase;letter-spacing:.03em;color:var(--text-faint);font-weight:700;}
+  .template-now-cell .real-list{font-size:10px;}
+  .template-arc-divider{display:flex;align-items:center;gap:10px;margin:20px 0;}
+  .template-arc-divider::before,.template-arc-divider::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--a2));}
+  .template-arc-divider::after{background:linear-gradient(90deg,var(--a2),transparent);}
+  .template-arc-divider span{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--a2-ink);font-weight:700;white-space:nowrap;}
+  .template-cell{border:1px solid var(--border);border-left:3px solid var(--stage-color,var(--a2));border-radius:10px;padding:12px;background:var(--bg-alt);opacity:0;animation:msgIn .5s ease forwards;}
+  .template-cell-head{display:flex;align-items:center;gap:7px;margin-bottom:8px;}
+  .template-cell-head .stage-icon{width:15px;height:15px;color:var(--stage-color,var(--a2));flex:none;}
+  .template-footer{margin-top:22px;padding-top:14px;border-top:1px dashed var(--border);text-align:center;font-size:10px;color:var(--text-faint);}
+  .template-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;}
+  .template-cell{border:1px solid var(--border);border-radius:10px;padding:11px;background:var(--bg-alt);opacity:0;animation:msgIn .5s ease forwards;}
+  .fvpc-why-template{margin-top:9px;padding:8px 10px;border-radius:8px;background:color-mix(in srgb, var(--stage-color, var(--a2)) 14%, var(--bg-alt));border-left:2px solid var(--stage-color, var(--a2));font-size:10.5px;color:var(--text);line-height:1.5;}
+  .fvpc-why-template .why-tag{display:block;font-size:8.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;color:var(--stage-color, var(--a2));margin-bottom:3px;}
+  .pains-compare{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start;margin:18px 0;padding:14px;border-radius:10px;background:var(--bg-alt);border:1px solid var(--border);}
+  .pains-compare-label{margin:0 0 8px;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+  .pains-compare-label.then{color:#E0796B;}
+  .pains-compare-label.now{color:var(--a1-ink);}
+  .pains-compare-arrow{display:flex;align-items:center;justify-content:center;color:var(--a2-ink);padding-top:16px;}
+  .pains-compare-arrow .icon{width:16px;height:16px;}
+  .template-cell h5{margin:0;font-size:11px;letter-spacing:.01em;color:var(--text);font-weight:600;}
+
+  /* ---- Library ---- */
+  .lib-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
+  .lib-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .lib-card{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface);display:flex;flex-direction:column;gap:8px;}
+  .lib-card h4{margin:0;font-size:13px;}
+  .note-body{margin:0;font-size:11.5px;color:var(--text-muted);line-height:1.55;}
+  .lib-tags{display:flex;gap:6px;flex-wrap:wrap;}
+  .tag{font-size:10px;color:var(--text-muted);border:1px solid var(--border);padding:3px 8px;border-radius:12px;}
+  .lib-actions{display:flex;align-items:center;gap:7px;margin-top:auto;}
+  .icon-btn{width:27px;height:27px;border-radius:7px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);flex:none;}
+  .icon-btn .icon{width:13px;height:13px;}
+  .lib-continue{font-size:11px;font-weight:600;color:var(--text);margin-left:auto;display:flex;align-items:center;gap:4px;cursor:pointer;}
+  .lib-panel{display:none;}
+  .lib-panel.active{display:block;}
+
+  /* ---- Projects ---- */
+  .projects-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:14px;}
+  .search-box{flex:1;max-width:300px;border:1px solid var(--border);border-radius:10px;padding:9px 13px;font-size:12px;color:var(--text-faint);background:var(--surface);display:flex;align-items:center;gap:8px;}
+  .project-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .project-card{border:1px solid var(--border);border-radius:14px;padding:15px;background:var(--surface);cursor:pointer;}
+  .project-thumb{height:70px;border-radius:9px;margin-bottom:13px;background:var(--grad-soft);border:1px solid var(--border-soft);}
+  .project-card h4{margin:0 0 6px;font-size:13.5px;}
+  .project-meta{display:flex;gap:8px;align-items:center;}
+
+  /* ---- Home / hero ---- */
+  .hero{position:relative;padding:68px 28px 60px;text-align:center;overflow:hidden;}
+  .glow{position:absolute;border-radius:50%;filter:blur(100px);opacity:.4;z-index:0;}
+  .glow.g1{width:340px;height:340px;background:var(--a2);top:-150px;left:50%;transform:translateX(-55%);}
+  .glow.g2{width:280px;height:280px;background:var(--a1);bottom:-180px;right:12%;opacity:.28;}
+  .hero-inner{position:relative;z-index:1;max-width:560px;margin:0 auto;}
+  .hero-orb{width:44px;height:44px;margin:0 auto 24px;border-radius:50%;background:conic-gradient(from 200deg,var(--a1),var(--a2),var(--a3),var(--a1));box-shadow:0 0 46px rgba(139,108,255,.45);}
+  .hero h1{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;line-height:1.15;margin:0 0 14px;letter-spacing:-.02em;}
+  .hero-tag{font-size:13.5px;color:var(--text-muted);margin:0 0 5px;line-height:1.6;}
+  .hero-tag-sub{font-size:12px;color:var(--text-faint);margin:0 0 30px;}
+  .hero-mission{font-size:13.5px;color:var(--text-muted);line-height:1.65;max-width:460px;margin:0 auto 44px;}
+  .hero-credit{margin-top:30px;font-size:10.5px;color:var(--text-faint);text-align:center;}
+  .option-row{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:left;}
+  .option-card-wrap{position:relative;display:flex;}
+  .option-glow{position:absolute;inset:-18px;background:linear-gradient(135deg, rgba(52,224,161,.4), rgba(139,108,255,.4) 55%, rgba(62,143,255,.4));filter:blur(42px);z-index:0;border-radius:26px;pointer-events:none;}
+  .option-card{position:relative;z-index:1;flex:1;}
+  .option-card{border:1px solid var(--border);border-radius:14px;padding:26px 24px;background:var(--surface);cursor:pointer;display:flex;flex-direction:column;}
+  .option-card:hover{border-color:var(--a2);}
+  .option-card h3{margin:0 0 10px;font-size:15px;}
+  .option-card p{margin:0 0 22px;font-size:11.5px;color:var(--text-muted);line-height:1.6;}
+  .option-card .go{display:block;text-align:center;font-size:12px;font-weight:600;color:var(--text);border:1px solid var(--border);border-radius:20px;padding:10px 0;margin-top:auto;}
+  .option-card:hover .go{border-color:var(--a2);color:var(--a2);}
+
+  @media (max-width:900px){
+    .body-row,.two-pane{flex-direction:column;}
+    .sidebar{width:100% !important;}
+    .pane-convo{border-right:none;border-bottom:1px solid var(--border-soft);}
+    .lib-grid,.project-grid,.option-row,.template-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7M6 10v9h5v-6h2v6h5v-9" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6.5h6l2 2.2h10V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="11" rx="2" stroke="currentColor" fill="none" stroke-width="1.6"/><path d="M8 8V6.5a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 16 6.5V8" stroke="currentColor" fill="none" stroke-width="1.6"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5h6a2 2 0 0 1 2 2V19a2 2 0 0 0-2-2H4z" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linejoin="round"/><path d="M20 5.5h-6a2 2 0 0 0-2 2V19a2 2 0 0 1 2-2h6z" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.2" stroke="currentColor" fill="none" stroke-width="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.2" stroke="currentColor" fill="none" stroke-width="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.2" stroke="currentColor" fill="none" stroke-width="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.2" stroke="currentColor" fill="none" stroke-width="1.6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.6 6 .7-4.4 4.1 1.2 6-5.4-3-5.4 3 1.2-6-4.4-4.1 6-.7z" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9l10-4.5L22 9l-10 4.5z" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 11v5c0 1.2 2.7 2.5 6 2.5s6-1.3 6-2.5v-5" stroke="currentColor" fill="none" stroke-width="1.6"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4-4m4 4 4-4" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 18h14" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" stroke="currentColor" fill="none" stroke-width="1.6"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.4 2c-.9.6-1.2 1-1.2 2" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="16.6" r=".9" fill="currentColor"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" stroke="currentColor" fill="none" stroke-width="1.6"/><path d="M12 3.5v2.4M12 18.1v2.4M20.5 12h-2.4M5.9 12H3.5M17.7 6.3l-1.7 1.7M8 16l-1.7 1.7M17.7 17.7 16 16M8 8 6.3 6.3" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><path d="M8 12.5V8a4 4 0 0 1 8 0v7a2.5 2.5 0 0 1-5 0V9" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V6M6 11l6-6 6 6" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" fill="none" stroke-width="1.6"/><path d="M20 20l-4.3-4.3" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" fill="none" stroke-width="1.6"/><path d="M6 15V6a1 1 0 0 1 1-1h9" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M7 7l1 12.5A1.5 1.5 0 0 0 9.5 21h5a1.5 1.5 0 0 0 1.5-1.5L17 7" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-open" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-7 7M10 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-insight" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-3.5 10.9c.5.4.8 1 .8 1.6v.5h5.4v-.5c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3z" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 19h5M10.2 21h3.6" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 2 20h20z" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 10v4" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="17" r=".9" fill="currentColor"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-8" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 7h4v4" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-shift" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.6-5.7M20 12a8 8 0 0 1-13.6 5.7" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/><path d="M17 3v4h-4M7 21v-4h4" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" stroke="currentColor" fill="none" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.5 2.3 3.8 5.4 3.8 8.5s-1.3 6.2-3.8 8.5c-2.5-2.3-3.8-5.4-3.8-8.5S9.5 5.8 12 3.5z" stroke="currentColor" fill="none" stroke-width="1.6"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" stroke="currentColor" fill="none" stroke-width="1.6"/><circle cx="12" cy="12" r="4.5" stroke="currentColor" fill="none" stroke-width="1.6"/><circle cx="12" cy="12" r="1" fill="currentColor"/></symbol>
+</svg>
+
+<div class="app">
+  <div class="frame">
+
+    <div class="topnav">
+      <div class="brand" onclick="showView('home')">
+        <div class="orb"></div><span class="brand-name disp">AURORA</span>
+        <span class="crumb" id="crumb"></span>
+      </div>
+      <div class="navright">
+        <input type="password" id="geminiKeyInput" class="nav-key" placeholder="Gemini API key" title="Kept in this browser tab only — never written to this file, never sent anywhere but Google/OpenAlex.">
+        <select id="modelSelect" class="nav-model">
+          <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash — default, may be rate-limited</option>
+          <option value="gemini-3.7-flash">Gemini 3.7 Flash — newest, fresh quota</option>
+          <option value="gemini-2.5-pro">Gemini 2.5 Pro — strongest reasoning, slower</option>
+          <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash Lite — fastest, lighter reasoning</option>
+          <option value="gemini-2.0-flash">Gemini 2.0 Flash — older, stable fallback</option>
+        </select>
+        <span class="pill-btn outline"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Export</span>
+        <div class="avatar"></div>
+      </div>
+    </div>
+
+    <div class="body-row">
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-head">
+          <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('collapsed')"><svg class="icon toggle-icon"><use href="#i-chevron"/></svg></button>
+          <span class="pane-label-text">Navigate</span>
+        </div>
+        <div class="nav-item current" data-navkey="home" onclick="showView('home')"><svg class="icon"><use href="#i-home"/></svg><span class="nlabel">Home</span></div>
+        <div class="nav-item" data-navkey="myprojects" onclick="showView('myprojects')"><svg class="icon"><use href="#i-folder"/></svg><span class="nlabel">My Projects</span></div>
+        <div class="nav-item" data-navkey="fvp" onclick="showView('fvpGallery')"><svg class="icon"><use href="#i-grid"/></svg><span class="nlabel">Future Value Propositions</span></div>
+        <div class="sidebar-spacer"></div>
+        <div class="nav-item stub"><svg class="icon"><use href="#i-settings"/></svg><span class="nlabel">Settings</span></div>
+      </div>
+
+      <div class="main">
+
+        <!-- HOME -->
+        <div class="view active" id="view-home">
+          <div class="hero-bright">
+            <div class="blob blob1"></div><div class="blob blob2"></div><div class="blob blob3"></div><div class="blob blob4"></div>
+            <div class="hero-bright-inner">
+              <h1 class="hero-bright-title">Which business challenge should we unravel today?</h1>
+
+              <div class="prompt-card" id="homePromptCard">
+                <button class="prompt-add-btn" onclick="document.getElementById('homeFileInput').click()" title="Add a document instead of typing">
+                  <svg class="icon"><use href="#i-plus"/></svg>
+                </button>
+                <input type="file" id="homeFileInput" accept=".pdf,.docx,.doc,.txt" style="display:none;" onchange="handleFileUpload(this,'homePromptInput')">
+                <textarea id="homePromptInput" class="prompt-textarea" rows="2"></textarea>
+                <select id="homeModeSelect" class="prompt-mode-dropdown">
+                  <option value="bc" selected>Business Challenge</option>
+                  <option value="ra">Research Article</option>
+                </select>
+                <button class="prompt-send-btn" onclick="submitHomePrompt()" title="Start">
+                  <svg class="icon"><use href="#i-arrow-up"/></svg>
+                </button>
+              </div>
+              <div class="prompt-file-status" id="homeFileInputStatus"></div>
+            </div>
+            <div class="hero-credit-bright">
+              <div class="hero-credit-line1">AURORA — Augmented University Research and Opportunity Realisation Assistant</div>
+              <div class="hero-credit-line2">by Dr Evy Sakellariou and Dr Yannis Spyridis, Kingston University London</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MY PROJECTS -->
+        <div class="view" id="view-myprojects">
+          <div class="pad">
+            <div class="projects-top">
+              <div class="search-box"><svg class="icon" style="width:13px;height:13px;"><use href="#i-search"/></svg>Search projects…</div>
+              <span class="pill-btn" onclick="showView('home')"><svg class="icon" style="width:12px;height:12px;stroke:var(--bg);"><use href="#i-plus"/></svg>New Project</span>
+            </div>
+            <div class="project-grid">
+              <div class="project-card" onclick="openWorkspaceBC()"><div class="project-thumb"></div><h4>NHS Digital Transformation</h4><div class="project-meta"><span class="tag">Business Challenge</span><span class="caption">Edited 2d ago</span></div></div>
+              <div class="project-card" onclick="openWorkspaceRA()"><div class="project-thumb"></div><h4>Airbus Future Value</h4><div class="project-meta"><span class="tag">Research Article</span><span class="caption">Edited 5d ago</span></div></div>
+              <div class="project-card" onclick="openWorkspaceRA()"><div class="project-thumb"></div><h4>Circular Economy Study</h4><div class="project-meta"><span class="tag">Research Article</span><span class="caption">Edited 1w ago</span></div></div>
+              <div class="project-card" onclick="openWorkspaceBC()"><div class="project-thumb"></div><h4>University Recruitment Strategy</h4><div class="project-meta"><span class="tag">Business Challenge</span><span class="caption">Edited 2w ago</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FUTURE VALUE PROPOSITIONS (gallery) -->
+        <div class="view" id="view-fvpGallery">
+          <div class="pad">
+            <div class="lib-top">
+              <h2 class="disp" style="margin:0;font-size:19px;">Future Value Propositions</h2>
+            </div>
+            <div class="project-grid">
+              <div class="project-card" onclick="showView('fvpc',{mode:'template',project:'Airbus'})"><div class="project-thumb"></div><h4>Airbus</h4><div class="project-meta"><span class="tag">Completed FVPC</span></div></div>
+              <div class="project-card" onclick="showView('fvpc',{mode:'template',project:'NHS'})"><div class="project-thumb"></div><h4>NHS</h4><div class="project-meta"><span class="tag">Completed FVPC</span></div></div>
+              <div class="project-card" onclick="showView('fvpc',{mode:'template',project:'Retail Banking'})"><div class="project-thumb"></div><h4>Retail Banking</h4><div class="project-meta"><span class="tag">Completed FVPC</span></div></div>
+              <div class="project-card" onclick="showView('fvpc',{mode:'template',project:'SME Innovation'})"><div class="project-thumb"></div><h4>SME Innovation</h4><div class="project-meta"><span class="tag">Completed FVPC</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SAVED INSIGHTS -->
+        <div class="view" id="view-savedInsights">
+          <div class="pad">
+            <div class="lib-top">
+              <h2 class="disp" style="margin:0;font-size:19px;">Saved Insights</h2>
+            </div>
+            <div class="lib-grid">
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Personal note</span></div><h4>Follow up on data-sharing access</h4><p class="note-body">Check with the KE team before the next workshop — access constraints may reshape the Current Value Proposition.</p><span class="caption">NHS Digital Transformation</span></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Favourite idea</span></div><h4>Reframe "efficiency" as "trust"</h4><p class="note-body">A mental model shift worth carrying into other projects — efficiency framing undersells the relationship value at stake.</p><span class="caption">Airbus Future Value</span></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Reflection note</span></div><h4>Shared future world?</h4><p class="note-body">Retail Banking's future pains map closely to SME Innovation's — worth checking for a shared Future World across both.</p><span class="caption">Retail Banking</span></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Favourite idea</span></div><h4>Foresight, not forecast</h4><p class="note-body">Frame Future Gains as user foresights, not predictions — keeps the canvas honest about uncertainty.</p><span class="caption">SME Innovation</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEARNING CENTRE -->
+        <div class="view" id="view-learningCentre">
+          <div class="pad">
+            <div class="lib-top">
+              <h2 class="disp" style="margin:0;font-size:19px;">Learning Centre</h2>
+            </div>
+            <div class="lib-card" style="margin-bottom:16px;">
+              <div class="lib-tags"><span class="tag">Guide</span></div>
+              <h4 style="font-size:15px;">How to use the Future Value Proposition Canvas</h4>
+              <p class="note-body">The core walkthrough — from mapping a Current Value Proposition through to Impact Opportunities.</p>
+            </div>
+            <div class="lib-grid">
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Short guide</span></div><h4>Writing a strong business challenge upload</h4><p class="note-body">What to include so AURORA can map an accurate Current Value Proposition.</p></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Example</span></div><h4>Sample FVPC — NHS Digital Transformation</h4><p class="note-body">A worked example, start to finish, on a real project type.</p></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Case study</span></div><h4>How Airbus reframed customer trust</h4><p class="note-body">A Mental Model Shift that changed the resulting Impact Opportunities.</p></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Video</span></div><h4>AURORA in four minutes</h4><p class="note-body">A short walkthrough of both Option 1 and Option 2 journeys.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REPORTS & EXPORTS -->
+        <div class="view" id="view-reports">
+          <div class="pad">
+            <div class="lib-top">
+              <h2 class="disp" style="margin:0;font-size:19px;">Reports &amp; Exports</h2>
+            </div>
+            <div class="lib-grid">
+              <div class="lib-card"><h4>NHS Digital Transformation — Future Value Proposition</h4><div class="lib-actions" style="margin-top:2px;"><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Word</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PDF</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PowerPoint</span></div></div>
+              <div class="lib-card"><h4>Airbus Future Value — Future Value Proposition</h4><div class="lib-actions" style="margin-top:2px;"><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Word</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PDF</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PowerPoint</span></div></div>
+              <div class="lib-card"><h4>Blank Future Value Proposition template</h4><div class="lib-actions" style="margin-top:2px;"><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Word</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PDF</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PowerPoint</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LIBRARY -->
+        <div class="view" id="view-library">
+          <div class="pad">
+            <div class="lib-top">
+              <div class="seg-tabs" id="libSeg">
+                <div class="seg-tab active" data-lib="bc" onclick="setLibTab('bc')">Business Challenges</div>
+                <div class="seg-tab" data-lib="ra" onclick="setLibTab('ra')">Research Articles</div>
+              </div>
+              <span class="pill-btn" onclick="showView('home')"><svg class="icon" style="width:12px;height:12px;stroke:var(--bg);"><use href="#i-plus"/></svg>Upload New</span>
+            </div>
+
+            <div class="lib-panel active" id="libBC">
+              <div class="lib-grid">
+                <div class="lib-card"><h4>NHS Digital Transformation</h4><div class="lib-tags"><span class="tag">Strategy report</span></div><div class="lib-actions"><div class="icon-btn"><svg class="icon"><use href="#i-open"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-copy"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-trash"/></svg></div><span class="lib-continue" onclick="openWorkspaceBC()">Continue →</span></div></div>
+                <div class="lib-card"><h4>University Recruitment Strategy</h4><div class="lib-tags"><span class="tag">Case study</span></div><div class="lib-actions"><div class="icon-btn"><svg class="icon"><use href="#i-open"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-copy"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-trash"/></svg></div><span class="lib-continue" onclick="openWorkspaceBC()">Continue →</span></div></div>
+                <div class="lib-card"><h4>Retail Banking Consultancy Report</h4><div class="lib-tags"><span class="tag">Consultancy report</span></div><div class="lib-actions"><div class="icon-btn"><svg class="icon"><use href="#i-open"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-copy"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-trash"/></svg></div><span class="lib-continue" onclick="openWorkspaceBC()">Continue →</span></div></div>
+                <div class="lib-card"><h4>SME Innovation Interview Transcript</h4><div class="lib-tags"><span class="tag">Interview transcript</span></div><div class="lib-actions"><div class="icon-btn"><svg class="icon"><use href="#i-open"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-copy"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-trash"/></svg></div><span class="lib-continue" onclick="openWorkspaceBC()">Continue →</span></div></div>
+              </div>
+            </div>
+
+            <div class="lib-panel" id="libRA">
+              <div class="lib-grid">
+                <div class="lib-card"><h4>Circular Economy Innovation, 2025</h4><div class="lib-tags"><span class="tag">ABS 4</span><span class="tag">Summary</span><span class="tag">FVPC mapping</span></div><div class="lib-actions"><div class="icon-btn"><svg class="icon"><use href="#i-open"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-copy"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-trash"/></svg></div><span class="lib-continue" onclick="openWorkspaceRA()">Continue →</span></div></div>
+                <div class="lib-card"><h4>Airbus Future Value Proposition, 2024</h4><div class="lib-tags"><span class="tag">ABS 3</span><span class="tag">Impact summary</span></div><div class="lib-actions"><div class="icon-btn"><svg class="icon"><use href="#i-open"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-copy"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-trash"/></svg></div><span class="lib-continue" onclick="openWorkspaceRA()">Continue →</span></div></div>
+                <div class="lib-card"><h4>Organisational Creativity &amp; GenAI, 2026</h4><div class="lib-tags"><span class="tag">ABS 4</span><span class="tag">FVPC mapping</span></div><div class="lib-actions"><div class="icon-btn"><svg class="icon"><use href="#i-open"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-copy"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-trash"/></svg></div><span class="lib-continue" onclick="openWorkspaceRA()">Continue →</span></div></div>
+                <div class="lib-card"><h4>Knowledge Exchange Practice, 2023</h4><div class="lib-tags"><span class="tag">ABS 3</span><span class="tag">Summary</span></div><div class="lib-actions"><div class="icon-btn"><svg class="icon"><use href="#i-open"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-copy"/></svg></div><div class="icon-btn"><svg class="icon"><use href="#i-trash"/></svg></div><span class="lib-continue" onclick="openWorkspaceRA()">Continue →</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKSPACE: BUSINESS CHALLENGE (Steps 1-8) -->
+        <div class="view" id="view-workspaceBC">
+          <div class="two-pane">
+            <div class="pane pane-convo" style="border-right:none;">
+              <div class="pane-label-row">
+                <div class="pane-label">Conversation</div>
+              </div>
+              <textarea id="challengeInput" style="display:none;">Kingston Hospital Trust is piloting a digital patient referral system to replace paper-based GP referrals. Clinicians report the current process is slow and error-prone, causing delayed treatment for non-urgent cases. Patients are frustrated by long waits and lack of visibility into referral status. The Trust wants to reduce referral processing time, cut duplicate paperwork, and give patients a way to track their own referral online, without increasing burden on already-stretched administrative staff.</textarea>
+
+              <div id="pipelineLog"></div>
+
+              <div class="convo-input-bar">
+                <button class="convo-input-add" onclick="showConvoInputToast(this)"><svg class="icon" style="width:14px;height:14px;"><use href="#i-plus"/></svg></button>
+                <div class="convo-input-text" onclick="showConvoInputToast(this)">Ask AURORA anything…</div>
+                <button class="convo-input-send" onclick="showConvoInputToast(this)"><svg class="icon" style="width:14px;height:14px;"><use href="#i-arrow-up"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKSPACE: RESEARCH ARTICLE (Option 2) -->
+        <div class="view" id="view-workspaceRA">
+          <div class="two-pane">
+            <div class="pane pane-convo" style="border-right:none;">
+              <div class="pane-label-row">
+                <div class="pane-label">Conversation</div>
+              </div>
+              <textarea id="articleInput" style="display:none;">Circular business models require firms to reconfigure value creation, delivery and capture around resource loops rather than linear extraction. Drawing on a multi-case study of manufacturing SMEs adopting circular practices, this study examines how firms translate circular economy principles into operational innovation. We find that successful adopters reframe waste streams as latent value propositions, but that this reframing is contingent on cross-functional collaboration and supportive procurement policy. Firms lacking this collaboration frequently revert to superficial "greenwashing" adjustments rather than substantive business model change. We contribute a process model explaining how circular value propositions emerge through iterative experimentation, and identify policy levers that accelerate adoption.</textarea>
+
+              <div id="pipelineLogRA"></div>
+
+              <div class="convo-input-bar">
+                <button class="convo-input-add" onclick="showConvoInputToast(this)"><svg class="icon" style="width:14px;height:14px;"><use href="#i-plus"/></svg></button>
+                <div class="convo-input-text" onclick="showConvoInputToast(this)">Ask AURORA anything…</div>
+                <button class="convo-input-send" onclick="showConvoInputToast(this)"><svg class="icon" style="width:14px;height:14px;"><use href="#i-arrow-up"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FVPC (still used by the Future Value Propositions gallery) -->
+        <div class="view" id="view-fvpc">
+          <div class="pad">
+            <div class="fvpc-head">
+              <div>
+                <h2 class="disp" id="fvpcTitle">Build the Future Value Proposition</h2>
+                <p id="fvpcSub">Step 9 — mapping insights stage by stage</p>
+              </div>
+              <div class="seg-tabs" id="fvpcSeg">
+                <div class="seg-tab active" data-view="flow" onclick="setFvpcMode('flow')">Build (Step 9)</div>
+                <div class="seg-tab" data-view="template" onclick="setFvpcMode('template')">Template (Step 10)</div>
+              </div>
+            </div>
+
+            <div id="fvpcFlow">
+              <div class="fvpc-flow" id="fvpcFlowSteps">
+                <div class="fvpc-step"><div class="fvpc-num">1</div><div><h4>Current Value Proposition</h4><div class="line w90"></div></div></div>
+                <div class="fvpc-connector"></div>
+                <div class="fvpc-step"><div class="fvpc-num">2</div><div><h4>Hidden User Insights</h4><div class="line w80"></div></div></div>
+                <div class="fvpc-connector"></div>
+                <div class="fvpc-step"><div class="fvpc-num">3</div><div><h4>Future Pains</h4><div class="line w60"></div></div></div>
+                <div class="fvpc-connector"></div>
+                <div class="fvpc-step"><div class="fvpc-num">4</div><div><h4>Future Gains / User Foresights</h4><div class="line w90"></div></div></div>
+                <div class="fvpc-connector"></div>
+                <div class="fvpc-step"><div class="fvpc-num">5</div><div><h4>Mental Model Shifts</h4><div class="line w80"></div></div></div>
+                <div class="fvpc-connector"></div>
+                <div class="fvpc-step"><div class="fvpc-num">6</div><div><h4>Future Worlds</h4><div class="line w60"></div></div></div>
+                <div class="fvpc-connector"></div>
+                <div class="fvpc-step"><div class="fvpc-num">7</div><div><h4>Impact Opportunities</h4><div class="line w90"></div></div></div>
+              </div>
+            </div>
+
+            <div id="fvpcTemplate" style="display:none;">
+              <div class="template-card">
+                <div class="template-header">
+                  <div class="template-brand"><div class="orb" style="width:18px;height:18px;"></div>Future Value Proposition</div>
+                  <span class="tag" id="fvpcProjTag">NHS Digital Transformation</span>
+                </div>
+
+                <div class="template-now-label">Today</div>
+                <div class="template-now-grid" id="fvpcNowGrid">
+                  <div class="template-now-cell"><h6>Customer Jobs</h6><div class="line w80"></div></div>
+                  <div class="template-now-cell"><h6>Customer Pains</h6><div class="line w80"></div></div>
+                  <div class="template-now-cell"><h6>Customer Gains</h6><div class="line w80"></div></div>
+                  <div class="template-now-cell"><h6>Products &amp; Services</h6><div class="line w80"></div></div>
+                  <div class="template-now-cell"><h6>Pain Relievers</h6><div class="line w80"></div></div>
+                  <div class="template-now-cell"><h6>Gain Creators</h6><div class="line w80"></div></div>
+                </div>
+
+                <div class="pains-compare">
+                  <div class="pains-compare-col">
+                    <h6 class="pains-compare-label then">Pains — Today</h6>
+                    <div id="painsThenList"></div>
+                  </div>
+                  <div class="pains-compare-arrow"><svg class="icon"><use href="#i-chevron"/></svg></div>
+                  <div class="pains-compare-col">
+                    <h6 class="pains-compare-label now">Pains — Tomorrow</h6>
+                    <div id="painsNowList"></div>
+                  </div>
+                </div>
+
+                <div class="template-arc-divider"><span>Becomes</span></div>
+
+                <div class="template-grid" id="fvpcTemplateGrid">
+                  <div class="template-cell"><h5>Hidden User Insights</h5><div class="line w90"></div><div class="line w60"></div></div>
+                  <div class="template-cell"><h5>Future Pains</h5><div class="line w80"></div><div class="line w60"></div></div>
+                  <div class="template-cell"><h5>Future Gains / User Foresights</h5><div class="line w90"></div><div class="line w40"></div></div>
+                  <div class="template-cell"><h5>Mental Model Shifts</h5><div class="line w60"></div><div class="line w80"></div></div>
+                  <div class="template-cell"><h5>Future Worlds</h5><div class="line w90"></div><div class="line w60"></div></div>
+                  <div class="template-cell"><h5>Impact Opportunities</h5><div class="line w80"></div><div class="line w40"></div></div>
+                </div>
+
+                <div class="template-footer">Generated by AURORA · Kingston University London</div>
+              </div>
+            </div>
+
+            <div class="fvpc-actions">
+              <span class="export-chip" style="cursor:pointer;" onclick="exportWord()"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Word</span>
+              <span class="export-chip" style="cursor:pointer;" onclick="exportPdf()"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PDF</span>
+              <span class="export-chip" style="cursor:pointer;" onclick="exportPptx()"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PowerPoint</span>
+              <span class="pill-btn" onclick="showView('home')"><svg class="icon" style="width:12px;height:12px;stroke:var(--bg);"><use href="#i-plus"/></svg>Start a New Project</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const crumbs = {
+    home:'', myprojects:'/ My Projects',
+    library:{bc:'/ Business Challenges', ra:'/ Research Articles'},
+    workspaceBC:'/ Business Challenges / <b>NHS Digital Transformation</b>',
+    workspaceRA:'/ Research Articles / <b>Circular Economy Study</b>',
+    fvpGallery:'/ Future Value Propositions',
+    savedInsights:'/ Saved Insights',
+    learningCentre:'/ Learning Centre',
+    reports:'/ Reports &amp; Exports'
+  };
+  const navkeys = { home:'home', myprojects:'myprojects', library:null, workspaceBC:'bc', workspaceRA:'ra',
+    fvpGallery:'fvp', fvpc:'fvp', savedInsights:'insights', learningCentre:'learning', reports:'reports' };
+
+  function showView(view, opts){
+    opts = opts || {};
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+view).classList.add('active');
+
+    let key = navkeys[view];
+    if(view==='library'){ key = (opts.libTab==='ra') ? 'ra' : 'bc'; setLibTab(opts.libTab||'bc'); }
+    document.querySelectorAll('.nav-item[data-navkey]').forEach(n=>n.classList.toggle('current', n.dataset.navkey===key));
+
+    let crumbText = crumbs[view];
+    if(view==='library'){ crumbText = crumbs.library[opts.libTab==='ra'?'ra':'bc']; }
+    if(view==='fvpc'){
+      const project = opts.project || 'NHS Digital Transformation';
+      crumbText = '/ Future Value Propositions / <b>'+project+'</b>';
+      document.getElementById('fvpcProjTag').textContent = project;
+      setFvpcMode(opts.mode || 'flow');
+    }
+    document.getElementById('crumb').innerHTML = crumbText || '';
+  }
+
+  function setLibTab(tab){
+    document.querySelectorAll('#libSeg .seg-tab').forEach(t=>t.classList.toggle('active', t.dataset.lib===tab));
+    document.getElementById('libBC').classList.toggle('active', tab==='bc');
+    document.getElementById('libRA').classList.toggle('active', tab==='ra');
+  }
+
+  function toggleLive(checkbox){
+    const twoPane = checkbox.closest('.two-pane');
+    twoPane.classList.toggle('live-on', checkbox.checked);
+  }
+
+  function setLivePanel(tabEl, panelId){
+    const row = tabEl.parentElement;
+    row.querySelectorAll('.live-tab[data-panel]').forEach(t=>t.classList.remove('active'));
+    tabEl.classList.add('active');
+    const group = panelId.startsWith('bc-') ? ['bc-cvp','bc-ki','bc-rf'] : ['ra-summary','ra-impl'];
+    group.forEach(id=>document.getElementById(id).classList.toggle('active', id===panelId));
+  }
+
+  function setFvpcMode(mode){
+    document.querySelectorAll('#fvpcSeg .seg-tab').forEach(t=>t.classList.toggle('active', t.dataset.view===mode));
+    const isFlow = mode==='flow';
+    document.getElementById('fvpcFlow').style.display = isFlow ? '' : 'none';
+    document.getElementById('fvpcTemplate').style.display = isFlow ? 'none' : '';
+    document.getElementById('fvpcTitle').textContent = isFlow ? 'Build the Future Value Proposition' : 'Future Value Proposition — Template';
+    document.getElementById('fvpcSub').textContent = isFlow ? 'Step 9 — mapping insights stage by stage' : 'Step 10 — the finished visual template';
+  }
+
+  // =====================================================================
+  // AURORA live pipeline (Option 1) -- ported from run_option1_pipeline.py
+  // Runs entirely client-side: your Gemini key stays in this tab's memory,
+  // never written to this file, never sent anywhere but Google/OpenAlex.
+  // =====================================================================
+
+  const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
+  const EMBED_MODEL = 'gemini-embedding-001'; // best guess -- see tracker #7
+  const KINGSTON_ROR = '05bbqza97';
+  const ABS_3_4_JOURNALS = new Set([
+    'academy of management journal', 'academy of management review',
+    'administrative science quarterly', 'journal of management studies',
+    'strategic management journal', 'organization science',
+    'journal of management', 'research policy',
+    'journal of business venturing', 'journal of product innovation management',
+    'technovation', 'international journal of management reviews',
+    'journal of international business studies', 'human relations',
+    'long range planning', 'british journal of management',
+    'industrial marketing management', 'journal of business research',
+    'entrepreneurship theory and practice', 'organization studies',
+  ]);
+
+  const AURORA_STATE = { currentVP: null, research: null, researchNotes: [], fvpc: null, raUnderstanding: null, raImplications: null };
+  let ACTIVE_LOG_ID = 'pipelineLog'; // which flow's conversation log appendMessage/pacedMessage write into
+
+  function getSelectedModel(){
+    const el = document.getElementById('modelSelect');
+    return (el && el.value) || DEFAULT_GEMINI_MODEL;
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+  function listHtml(items){
+    if (!items || !items.length) return '<div class="caption">—</div>';
+    return '<ul class="real-list">' + items.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul>';
+  }
+
+  // ---- File upload: real client-side PDF/Word text extraction, no server ----
+  function ensurePdfWorker(){
+    if (window.pdfjsLib && !pdfjsLib.GlobalWorkerOptions.workerSrc){
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  }
+  async function extractPdfText(file){
+    ensurePdfWorker();
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    let text = '';
+    for (let i = 1; i <= pdf.numPages; i++){
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(it => it.str).join(' ') + '\n\n';
+    }
+    return text;
+  }
+  async function extractDocxText(file){
+    const buf = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer: buf });
+    return result.value;
+  }
+  async function handleFileUpload(inputEl, targetTextareaId){
+    const file = inputEl.files[0];
+    if (!file) return;
+    const statusEl = document.getElementById(inputEl.id + 'Status');
+    if (statusEl) statusEl.textContent = `Reading ${file.name}…`;
+    try {
+      const name = file.name.toLowerCase();
+      let text;
+      if (name.endsWith('.pdf')){
+        if (!window.pdfjsLib) throw new Error('PDF reader library failed to load -- check your internet connection and try again.');
+        text = await extractPdfText(file);
+      } else if (name.endsWith('.docx')){
+        if (!window.mammoth) throw new Error('Word reader library failed to load -- check your internet connection and try again.');
+        text = await extractDocxText(file);
+      } else if (name.endsWith('.doc')){
+        throw new Error("Legacy .doc isn't supported client-side -- please save as .docx or .pdf and try again.");
+      } else {
+        text = await file.text();
+      }
+      text = text.trim();
+      if (!text) throw new Error('No extractable text found in this file (it may be a scanned/image-only PDF).');
+      document.getElementById(targetTextareaId).value = text;
+      if (statusEl) statusEl.textContent = `Loaded ${file.name} — ${text.length.toLocaleString()} characters. Edit below if needed.`;
+    } catch (err){
+      if (statusEl) statusEl.textContent = `Couldn't read ${file.name}: ${err.message}`;
+      console.error(err);
+    }
+  }
+
+  async function callGeminiJSON(apiKey, systemPrompt, userContent, temperature){
+    temperature = temperature === undefined ? 0.3 : temperature;
+    const model = getSelectedModel();
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: 'POST',
+      headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: userContent }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        generationConfig: { responseMimeType: 'application/json', temperature },
+      }),
+    });
+    if (!res.ok) throw new Error(`Gemini generateContent (${model}) ${res.status}: ${(await res.text()).slice(0,300)}`);
+    const data = await res.json();
+    return JSON.parse(data.candidates[0].content.parts[0].text);
+  }
+
+  async function embedTexts(apiKey, texts){
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${EMBED_MODEL}:batchEmbedContents`, {
+      method: 'POST',
+      headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        requests: texts.map(t => ({ model: `models/${EMBED_MODEL}`, content: { parts: [{ text: t }] } })),
+      }),
+    });
+    if (!res.ok) throw new Error(`Gemini batchEmbedContents ${res.status}: ${(await res.text()).slice(0,300)}`);
+    const data = await res.json();
+    return data.embeddings.map(e => e.values);
+  }
+
+  function cosineSimilarity(a, b){
+    let dot = 0, na = 0, nb = 0;
+    for (let i = 0; i < a.length; i++){ dot += a[i]*b[i]; na += a[i]*a[i]; nb += b[i]*b[i]; }
+    if (na === 0 || nb === 0) return 0;
+    return dot / (Math.sqrt(na) * Math.sqrt(nb));
+  }
+
+  async function searchOpenAlex(query, institutionId, perPage){
+    const params = new URLSearchParams({ search: query, sort: 'relevance_score:desc', per_page: String(perPage||10), mailto: 'aurora-mvp-demo@example.com' });
+    if (institutionId) params.set('filter', `institutions.id:${institutionId}`);
+    const res = await fetch(`https://api.openalex.org/works?${params.toString()}`);
+    if (!res.ok) throw new Error(`OpenAlex works ${res.status}`);
+    return (await res.json()).results || [];
+  }
+
+  async function resolveKingstonId(){
+    const res = await fetch(`https://api.openalex.org/institutions/ror:https://ror.org/${KINGSTON_ROR}`);
+    if (!res.ok) throw new Error(`OpenAlex institution lookup ${res.status}`);
+    return (await res.json()).id;
+  }
+
+  function reconstructAbstract(invertedIndex){
+    if (!invertedIndex) return '';
+    const positions = {};
+    Object.keys(invertedIndex).forEach(word => { invertedIndex[word].forEach(i => { positions[i] = word; }); });
+    return Object.keys(positions).map(Number).sort((a,b)=>a-b).map(i => positions[i]).join(' ');
+  }
+
+  function formatWork(w){
+    const source = (w.primary_location && w.primary_location.source) || {};
+    return {
+      title: w.title,
+      year: w.publication_year,
+      journal: source.display_name || '',
+      authors: (w.authorships || []).map(a => a.author.display_name),
+      abstract: reconstructAbstract(w.abstract_inverted_index),
+      oa_pdf_url: (w.open_access && w.open_access.oa_url) || null,
+      openalex_url: w.id,
+    };
+  }
+
+  async function mapCurrentVP(apiKey, text){
+    const sys = `You are AURORA, mapping a business challenge document onto a Value Proposition Canvas. Read the text and return ONLY valid JSON with exactly these six keys, each an array of 2-4 short phrases: customer_jobs, customer_pains, customer_gains, products_services, pain_relievers, gain_creators.
+
+customer_jobs = what the customer/user is trying to get done.
+customer_pains = frustrations, risks, obstacles they currently face.
+customer_gains = outcomes/benefits they want.
+products_services = what the organisation currently offers.
+pain_relievers = how current offerings address the pains.
+gain_creators = how current offerings produce the gains.
+
+Base every item on the text provided. Do not invent facts not implied by the text.`;
+    return await callGeminiJSON(apiKey, sys, text);
+  }
+
+  async function extractThemes(apiKey, currentVP){
+    const sys = `Given this Value Proposition Canvas JSON, return ONLY valid JSON in the form {"themes": ["...", "...", "..."]} containing 3-5 short academic search keywords/phrases that would find relevant management or innovation research on this challenge.`;
+    const result = await callGeminiJSON(apiKey, sys, JSON.stringify(currentVP));
+    return result.themes;
+  }
+
+  async function identifyMainChallenge(apiKey, currentVP){
+    const sys = `You are AURORA. Given this Value Proposition Canvas JSON, identify the single main organisational challenge in one or two plain sentences -- the crux of what's going wrong that everything else stems from. Return ONLY valid JSON: {"challenge": "..."}`;
+    const result = await callGeminiJSON(apiKey, sys, JSON.stringify(currentVP));
+    return result.challenge;
+  }
+
+  async function searchAndRankResearch(apiKey, themes, currentVP, institutionId, onProgress){
+    const notes = [];
+    async function collect(instId){
+      const byId = {};
+      for (const theme of themes){
+        (await searchOpenAlex(theme, instId, 10)).forEach(w => { byId[w.id] = w; });
+      }
+      return byId;
+    }
+
+    let candidatesById = await collect(institutionId);
+    let scope = 'Kingston-affiliated';
+    if (Object.keys(candidatesById).length === 0){
+      notes.push('No Kingston-affiliated results for any theme -- widening to a general topic search.');
+      candidatesById = await collect(null);
+      scope = 'general (Kingston filter dropped)';
+    }
+    if (onProgress) await onProgress('searched');
+
+    const candidates = Object.values(candidatesById);
+    if (candidates.length === 0){
+      notes.push('No OpenAlex results found for any theme at all.');
+      if (onProgress) { await onProgress('reranked'); await onProgress('selected'); }
+      return { shortlist: [], recommendedIndex: null, recommendedReason: null, notes };
+    }
+    notes.push(`Pulled ${candidates.length} unique ${scope} candidates across ${themes.length} theme queries.`);
+
+    const candidateTexts = candidates.map(w => `${w.title||''}. ${reconstructAbstract(w.abstract_inverted_index)}`);
+    const queryText = themes.join(' ');
+
+    notes.push('Embedding query + candidates for semantic rerank...');
+    const allVecs = await embedTexts(apiKey, [queryText].concat(candidateTexts));
+    const queryVec = allVecs[0], candidateVecs = allVecs.slice(1);
+
+    const scored = candidates.map((w,i) => ({ w, score: cosineSimilarity(queryVec, candidateVecs[i]) }));
+    scored.sort((a,b) => b.score - a.score);
+    const shortlist = scored.slice(0,8).map(s => s.w);
+    notes.push(`Semantic rerank kept top ${shortlist.length} of ${candidates.length} by cosine similarity.`);
+    if (onProgress) await onProgress('reranked');
+
+    const candidateSummaries = shortlist.map((w,i) => {
+      const journal = ((w.primary_location && w.primary_location.source) || {}).display_name || '';
+      return {
+        index: i, title: w.title, journal,
+        journal_is_abs34: ABS_3_4_JOURNALS.has(journal.toLowerCase()),
+        abstract_snippet: reconstructAbstract(w.abstract_inverted_index).slice(0,600),
+      };
+    });
+
+    const sys = `You are AURORA, recommending the single best-matching research paper for a business challenge, subject to the user's confirmation. You are given the challenge's Value Proposition Canvas and a shortlist of candidate papers, already pre-filtered for semantic similarity (title, journal, whether the journal is on an ABS 3/4 allowlist, and an abstract snippet).
+
+Return ONLY valid JSON:
+{"selected_index": <int or null>, "is_genuinely_relevant": true/false, "reason": "..."}
+
+Judge on actual subject-matter relevance to the challenge first. Prefer an ABS 3/4 journal only when relevance is roughly comparable between candidates -- a topically strong match in a non-listed journal beats a topically weak match in a listed one. If none of the candidates are genuinely relevant, even loosely, set selected_index to null and is_genuinely_relevant to false. Do not force a weak recommendation just to return something -- the user will see the full list either way and can choose for themselves.`;
+
+    const judgment = await callGeminiJSON(apiKey, sys, JSON.stringify({ current_value_proposition: currentVP, candidates: candidateSummaries }));
+    if (onProgress) await onProgress('selected');
+
+    if (judgment.selected_index === null || judgment.selected_index === undefined || !judgment.is_genuinely_relevant){
+      notes.push(`No strong recommendation -- Gemini's reasoning: ${judgment.reason}`);
+      return { shortlist, recommendedIndex: null, recommendedReason: judgment.reason, notes };
+    }
+    notes.push(`Recommended candidate ${judgment.selected_index} -- reasoning: ${judgment.reason}`);
+    return { shortlist, recommendedIndex: judgment.selected_index, recommendedReason: judgment.reason, notes };
+  }
+
+  async function buildFVPC(apiKey, currentVP, research){
+    const sys = `You are AURORA, building the Future Value Proposition for a business challenge. You are given the organisation's Current Value Proposition and (if available) a relevant piece of academic research.
+
+Return ONLY valid JSON with exactly these six keys, each an object of the form {"items": ["...", "..."], "reasoning": "..."}:
+hidden_user_insights, future_pains, future_gains_user_foresights, mental_model_shifts, future_worlds, impact_opportunities
+
+"items" = 2-4 short phrases for that stage.
+"reasoning" = one short sentence explaining specifically which part of the Current Value Proposition and/or the research these items follow from -- not a generic justification, a traceable one.
+
+hidden_user_insights = non-obvious needs/behaviours implied by the inputs, not yet addressed by current products/services.
+future_pains = new or evolving frustrations customers may face as needs, behaviour, or context shift.
+future_gains_user_foresights = future benefits or outcomes customers may come to expect.
+mental_model_shifts = how the organisation or its customers should change the way they think about this problem.
+future_worlds = plausible future scenarios/contexts the organisation may need to operate in.
+impact_opportunities = concrete opportunities the organisation could act on, grounded in everything above.
+
+Ground every item and its reasoning in the Current Value Proposition and the research provided. If no research is provided, reason from the Current Value Proposition alone and say so in the reasoning rather than inventing a citation.`;
+    return await callGeminiJSON(apiKey, sys, JSON.stringify({ current_value_proposition: currentVP, research_findings: research }));
+  }
+
+  // ---- Option 2 (Research Article) -- reuses buildFVPC() above once it has a Current VP ----
+
+  async function understandResearch(apiKey, articleText){
+    const sys = `You are AURORA, reading an uploaded research article. Return ONLY valid JSON with exactly these four keys, each a short 1-2 sentence string: research_question, main_theory, method, findings.
+
+research_question = what the researchers wanted to understand.
+main_theory = the main idea or theoretical lens used.
+method = how the research was carried out.
+findings = what they found and why it matters.
+
+Base every field on the text provided. Do not invent details not implied by the text.`;
+    return await callGeminiJSON(apiKey, sys, articleText);
+  }
+
+  async function practicalImplications(apiKey, understanding){
+    const sys = `You are AURORA, translating academic research into practical business insight. Given this research understanding JSON, return ONLY valid JSON with exactly these three keys, each an array of 2-4 short phrases: management_implications, policy_implications, entrepreneurial_implications.`;
+    return await callGeminiJSON(apiKey, sys, JSON.stringify(understanding));
+  }
+
+  async function inferIllustrativeVP(apiKey, understanding, implications){
+    const sys = `You are AURORA. No specific organisation's document was uploaded here -- only a research article. Infer a plausible, illustrative Current Value Proposition for a representative organisation this research's findings would be relevant to today, before applying these findings. Return ONLY valid JSON with exactly these six keys, each an array of 2-4 short phrases: customer_jobs, customer_pains, customer_gains, products_services, pain_relievers, gain_creators.
+
+Ground this in the research understanding and practical implications provided -- it should read as a believable "before" state that the research's findings would meaningfully change, not a generic template.`;
+    return await callGeminiJSON(apiKey, sys, JSON.stringify({ research_understanding: understanding, practical_implications: implications }));
+  }
+
+  function currentVPCanvasHtml(vp){
+    return `<div class="canvas-grid" style="margin-top:14px;">` + [
+      ['Customer Jobs', vp.customer_jobs], ['Customer Pains', vp.customer_pains],
+      ['Customer Gains', vp.customer_gains], ['Products &amp; Services', vp.products_services],
+      ['Pain Relievers', vp.pain_relievers], ['Gain Creators', vp.gain_creators],
+    ].map(([label, items]) => `<div class="canvas-cell"><h4>${label}</h4>${listHtml(items)}</div>`).join('') + `</div>`;
+  }
+
+  function renderKeyInsights(themes, notes){
+    document.getElementById('kiContent').innerHTML =
+      `<div class="impl-box"><h4>Search themes</h4>${listHtml(themes)}</div>
+       <div class="impl-box"><h4>Match reasoning log</h4>${listHtml(notes)}</div>`;
+  }
+
+  function renderResearch(research, notes){
+    const el = document.getElementById('rfContent');
+    if (!research){
+      el.innerHTML = `<div class="research-card"><span class="jrnl">NO MATCH</span>
+        <div style="font-size:12px;color:var(--text-muted);">No genuinely relevant Kingston-affiliated research was found for this challenge.</div>
+      </div><div class="impl-box"><h4>Search log</h4>${listHtml(notes)}</div>`;
+      return;
+    }
+    const abs34 = ABS_3_4_JOURNALS.has((research.journal||'').toLowerCase());
+    el.innerHTML = `<div class="research-card">
+        <span class="jrnl">${abs34 ? 'ABS 3/4 JOURNAL' : 'NOT ON ABS 3/4 ALLOWLIST'}</span>
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px;">${escapeHtml(research.title)}</div>
+        <div class="caption">${escapeHtml(research.journal)} · ${research.year||''}</div>
+        <div class="caption" style="margin-top:6px;">${escapeHtml((research.authors||[]).join(', '))}</div>
+        ${research.oa_pdf_url ? `<div class="caption" style="margin-top:6px;"><a href="${research.oa_pdf_url}" target="_blank" style="color:var(--a2-ink);">Open access PDF →</a></div>` : ''}
+      </div><div class="impl-box"><h4>Search log</h4>${listHtml(notes)}</div>`;
+  }
+
+  function renderRASummary(understanding){
+    document.getElementById('raSummaryContent').innerHTML = `
+      <div class="mini-field"><span class="mini-label">Research question</span>${escapeHtml(understanding.research_question)}</div>
+      <div class="mini-field"><span class="mini-label">Main theory</span>${escapeHtml(understanding.main_theory)}</div>
+      <div class="mini-field"><span class="mini-label">Method</span>${escapeHtml(understanding.method)}</div>
+      <div class="mini-field"><span class="mini-label">Findings</span>${escapeHtml(understanding.findings)}</div>`;
+  }
+
+  function renderRAImplications(implications){
+    document.getElementById('raImplContent').innerHTML = `
+      <div class="impl-box"><h4>Management Implications</h4>${listHtml(implications.management_implications)}</div>
+      <div class="impl-box"><h4>Policy Implications</h4>${listHtml(implications.policy_implications)}</div>
+      <div class="impl-box"><h4>Entrepreneurial Implications</h4>${listHtml(implications.entrepreneurial_implications)}</div>`;
+  }
+
+  const STAGE_META = [
+    { label: 'Hidden User Insights', icon: 'i-insight', color: '#0E9A6C' },
+    { label: 'Future Pains', icon: 'i-alert', color: '#2E8F82' },
+    { label: 'Future Gains / User Foresights', icon: 'i-trend', color: '#4C7FA6' },
+    { label: 'Mental Model Shifts', icon: 'i-shift', color: '#6D46E8' },
+    { label: 'Future Worlds', icon: 'i-globe', color: '#4F6FD9' },
+    { label: 'Impact Opportunities', icon: 'i-target', color: '#2E6FE0' },
+  ];
+
+  async function renderFvpc(){
+    if (!AURORA_STATE.fvpc) return;
+    const f = AURORA_STATE.fvpc;
+    const vp = AURORA_STATE.currentVP || {};
+    const dataForStage = [
+      f.hidden_user_insights, f.future_pains, f.future_gains_user_foresights,
+      f.mental_model_shifts, f.future_worlds, f.impact_opportunities,
+    ];
+    const flowEl = document.getElementById('fvpcFlowSteps');
+    const gridEl = document.getElementById('fvpcTemplateGrid');
+    const nowGridEl = document.getElementById('fvpcNowGrid');
+    flowEl.innerHTML = '';
+    gridEl.innerHTML = '';
+
+    if (nowGridEl){
+      const nowCells = [
+        ['Customer Jobs', vp.customer_jobs], ['Customer Pains', vp.customer_pains],
+        ['Customer Gains', vp.customer_gains], ['Products &amp; Services', vp.products_services],
+        ['Pain Relievers', vp.pain_relievers], ['Gain Creators', vp.gain_creators],
+      ];
+      nowGridEl.innerHTML = nowCells.map(([label, items]) =>
+        `<div class="template-now-cell"><h6>${label}</h6>${listHtml(items)}</div>`).join('');
+    }
+
+    const painsThenEl = document.getElementById('painsThenList');
+    const painsNowEl = document.getElementById('painsNowList');
+    if (painsThenEl && painsNowEl){
+      const fpData = f.future_pains;
+      const fpItems = Array.isArray(fpData) ? fpData : ((fpData && fpData.items) || []);
+      painsThenEl.innerHTML = listHtml(vp.customer_pains);
+      painsNowEl.innerHTML = listHtml(fpItems);
+    }
+
+    const stage1 = document.createElement('div');
+    stage1.className = 'fvpc-step';
+    stage1.innerHTML = `<div class="fvpc-num">1</div><div><h4>Current Value Proposition</h4>${listHtml(vp.customer_jobs)}</div>`;
+    flowEl.appendChild(stage1);
+
+    for (let i = 0; i < STAGE_META.length; i++){
+      const meta = STAGE_META[i];
+      const data = dataForStage[i];
+      // Tolerate either the new {items, reasoning} shape or a plain array, in case older saved state is loaded.
+      const items = Array.isArray(data) ? data : ((data && data.items) || []);
+      const reasoning = Array.isArray(data) ? null : (data && data.reasoning);
+
+      await sleep(450);
+
+      const connector = document.createElement('div');
+      connector.className = 'fvpc-connector';
+      flowEl.appendChild(connector);
+
+      const step = document.createElement('div');
+      step.className = 'fvpc-step';
+      step.innerHTML = `<div class="fvpc-num">${i+2}</div><div><h4>${escapeHtml(meta.label)}</h4>${listHtml(items)}${reasoning ? `<div class="fvpc-why"><span class="why-label">Why</span> — ${escapeHtml(reasoning)}</div>` : ''}</div>`;
+      flowEl.appendChild(step);
+
+      const cell = document.createElement('div');
+      cell.className = 'template-cell';
+      cell.style.setProperty('--stage-color', meta.color);
+      cell.innerHTML = `<div class="template-cell-head"><svg class="icon stage-icon"><use href="#${meta.icon}"/></svg><h5>${escapeHtml(meta.label)}</h5></div>${listHtml(items)}${reasoning ? `<div class="fvpc-why-template"><span class="why-tag">What's changing</span>${escapeHtml(reasoning)}</div>` : ''}`;
+      gridEl.appendChild(cell);
+    }
+  }
+
+  // ---- Real exports off whatever's actually in AURORA_STATE -- no fake downloads ----
+
+  function getFvpcExportData(){
+    if (!AURORA_STATE.fvpc || !AURORA_STATE.currentVP) return null;
+    const vp = AURORA_STATE.currentVP;
+    const f = AURORA_STATE.fvpc;
+    const projTag = document.getElementById('fvpcProjTag');
+    const project = (projTag && projTag.textContent) || 'AURORA Project';
+
+    const stageDefs = [
+      ['Hidden User Insights', f.hidden_user_insights],
+      ['Future Pains', f.future_pains],
+      ['Future Gains / User Foresights', f.future_gains_user_foresights],
+      ['Mental Model Shifts', f.mental_model_shifts],
+      ['Future Worlds', f.future_worlds],
+      ['Impact Opportunities', f.impact_opportunities],
+    ];
+
+    const sections = [{
+      heading: 'Current Value Proposition',
+      lines: [].concat(
+        (vp.customer_jobs||[]).map(t => 'Job: ' + t),
+        (vp.customer_pains||[]).map(t => 'Pain: ' + t),
+        (vp.customer_gains||[]).map(t => 'Gain: ' + t),
+        (vp.products_services||[]).map(t => 'Offer: ' + t)
+      ),
+      reasoning: null,
+    }];
+
+    stageDefs.forEach(([label, data]) => {
+      const items = Array.isArray(data) ? data : ((data && data.items) || []);
+      const reasoning = Array.isArray(data) ? null : (data && data.reasoning);
+      sections.push({ heading: label, lines: items, reasoning });
+    });
+
+    if (AURORA_STATE.research){
+      sections.push({
+        heading: 'Supporting Research',
+        lines: [AURORA_STATE.research.title, [AURORA_STATE.research.journal, AURORA_STATE.research.year].filter(Boolean).join(' · ')].filter(Boolean),
+        reasoning: null,
+      });
+    }
+
+    return { project, sections, filenameBase: 'AURORA-FVP-' + project.replace(/[^a-z0-9]+/gi, '-') };
+  }
+
+  async function saveOrDownload(filename, blob){
+    let downloads = null;
+    try { downloads = window.claude ? await window.claude.use('downloads') : null; } catch (e) { downloads = null; }
+    if (downloads){
+      try { await downloads.save({ filename, data: blob }); }
+      catch (err) { alert('Could not save ' + filename + ': ' + ((err && err.message) || err)); }
+      return;
+    }
+    // Local-file fallback: a plain download link works fine outside the published artifact.
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
+  async function exportPdf(){
+    const data = getFvpcExportData();
+    if (!data){ alert('Build the Future Value Proposition first.'); return; }
+    if (!window.jspdf){ alert('PDF library failed to load -- check your internet connection and try again.'); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const margin = 48;
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const maxWidth = pageWidth - margin * 2;
+    let y = margin;
+
+    function ensureSpace(lineCount){
+      if (y + lineCount * 14 > pageHeight - margin){ doc.addPage(); y = margin; }
+    }
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(20);
+    doc.text('Future Value Proposition', margin, y); y += 20;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(130);
+    doc.text(data.project, margin, y); y += 26;
+
+    data.sections.forEach(sec => {
+      ensureSpace(3);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(20);
+      doc.text(sec.heading, margin, y); y += 16;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+      sec.lines.forEach(line => {
+        const wrapped = doc.splitTextToSize('- ' + line, maxWidth);
+        ensureSpace(wrapped.length);
+        doc.text(wrapped, margin, y);
+        y += wrapped.length * 13;
+      });
+      if (sec.reasoning){
+        ensureSpace(2);
+        doc.setFont('helvetica', 'italic'); doc.setFontSize(9); doc.setTextColor(130);
+        const wrapped = doc.splitTextToSize('Why: ' + sec.reasoning, maxWidth);
+        doc.text(wrapped, margin, y);
+        y += wrapped.length * 12;
+      }
+      y += 10;
+    });
+
+    await saveOrDownload(data.filenameBase + '.pdf', doc.output('blob'));
+  }
+
+  async function exportWord(){
+    const data = getFvpcExportData();
+    if (!data){ alert('Build the Future Value Proposition first.'); return; }
+    let downloads = null;
+    try { downloads = window.claude ? await window.claude.use('downloads') : null; } catch (e) { downloads = null; }
+    if (downloads){
+      alert("Word export isn't available in this published view -- the .doc format this uses isn't on the platform's allowed download list (only .docx is, and this doesn't generate real .docx). Use PDF or PowerPoint here, or open the file locally for Word export.");
+      return;
+    }
+    let html = `<html><head><meta charset="utf-8"><title>Future Value Proposition</title></head>
+      <body style="font-family:Calibri,Arial,sans-serif;">
+      <h1>Future Value Proposition</h1>
+      <p style="color:#666;">${escapeHtml(data.project)}</p>`;
+    data.sections.forEach(sec => {
+      html += `<h2>${escapeHtml(sec.heading)}</h2><ul>`;
+      sec.lines.forEach(line => { html += `<li>${escapeHtml(line)}</li>`; });
+      html += `</ul>`;
+      if (sec.reasoning) html += `<p><i>Why: ${escapeHtml(sec.reasoning)}</i></p>`;
+    });
+    html += `</body></html>`;
+    const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = data.filenameBase + '.doc';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
+  async function exportPptx(){
+    const data = getFvpcExportData();
+    if (!data){ alert('Build the Future Value Proposition first.'); return; }
+    if (!window.PptxGenJS){ alert('PowerPoint library failed to load -- check your internet connection and try again.'); return; }
+    const pres = new PptxGenJS();
+
+    const titleSlide = pres.addSlide();
+    titleSlide.background = { color: '08080C' };
+    titleSlide.addText('Future Value Proposition', { x:0.5, y:2, w:9, h:1, fontSize:32, bold:true, color:'FFFFFF' });
+    titleSlide.addText(data.project, { x:0.5, y:3, w:9, h:0.6, fontSize:16, color:'9A9AB0' });
+
+    data.sections.forEach(sec => {
+      const slide = pres.addSlide();
+      slide.background = { color: '08080C' };
+      slide.addText(sec.heading, { x:0.5, y:0.4, w:9, h:0.7, fontSize:22, bold:true, color:'34E0A1' });
+      const bodyText = sec.lines.map(l => ({ text: l, options: { bullet: true, breakLine: true } }));
+      slide.addText(bodyText, { x:0.5, y:1.3, w:9, h:4, fontSize:14, color:'F3F3F7' });
+      if (sec.reasoning){
+        slide.addText('Why: ' + sec.reasoning, { x:0.5, y:5.5, w:9, h:0.8, fontSize:11, italic:true, color:'9A9AB0' });
+      }
+    });
+
+    const blob = await pres.write({ outputType: 'blob' });
+    await saveOrDownload(data.filenameBase + '.pptx', blob);
+  }
+
+  function appendMessage(role, stepTag, bodyHtml){
+    const log = document.getElementById(ACTIVE_LOG_ID);
+    const div = document.createElement('div');
+    div.className = 'msg ' + role;
+    div.innerHTML = (stepTag ? `<span class="step-tag">${escapeHtml(stepTag)}</span>` : '') + `<div class="bubble">${bodyHtml}</div>`;
+    log.appendChild(div);
+    return div;
+  }
+  function showValidationToast(message){
+    const log = document.getElementById(ACTIVE_LOG_ID);
+    const paneConvo = log.closest('.pane-convo');
+    if (!paneConvo) return;
+    const existing = paneConvo.querySelector('.validation-toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'validation-toast';
+    toast.textContent = message;
+    paneConvo.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 250);
+    }, 3000);
+  }
+  function showConvoInputToast(fromEl){
+    const paneConvo = fromEl.closest('.pane-convo');
+    if (!paneConvo) return;
+    const existing = paneConvo.querySelector('.validation-toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'validation-toast';
+    toast.textContent = "Free-form replies aren't wired up in this prototype yet — AURORA follows the step-by-step flow above.";
+    paneConvo.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 250);
+    }, 3200);
+  }
+  function setMessageBody(div, bodyHtml){
+    div.querySelector('.bubble').innerHTML = bodyHtml;
+  }
+  function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+  /* Every AI message goes through a visible "thinking" pulse before revealing,
+     even ones with no real API call behind them -- so steps read as a
+     sequence happening one after another, not a wall of text at once. */
+  async function pacedMessage(stepTag, thinkingText, minDelayMs, finalHtmlOrFn){
+    await sleep(400); // beat before the message even starts appearing
+    const div = appendMessage('ai', stepTag, `<span class="thinking">${escapeHtml(thinkingText||'…')}</span>`);
+    let finalHtml;
+    if (typeof finalHtmlOrFn === 'function'){
+      const [result] = await Promise.all([finalHtmlOrFn(), sleep(minDelayMs)]);
+      finalHtml = result;
+    } else {
+      await sleep(minDelayMs);
+      finalHtml = finalHtmlOrFn;
+    }
+    setMessageBody(div, finalHtml);
+    return div;
+  }
+  function waitForChoice(bubbleEl, choices){
+    return new Promise(resolve => {
+      const row = document.createElement('div');
+      row.className = 'quick-reply-row';
+      choices.forEach(c => {
+        const chip = document.createElement('span');
+        chip.className = 'qr-chip action' + (c.primary ? ' primary' : '');
+        chip.textContent = c.label;
+        chip.onclick = () => { row.remove(); resolve(c.value); };
+        row.appendChild(chip);
+      });
+      bubbleEl.appendChild(row);
+    });
+  }
+  function getAuthors(w){
+    return (w.authorships || []).map(a => a.author.display_name);
+  }
+  function paperReviewIntroHtml(recommendedIndex, recommendedReason){
+    if (recommendedIndex === null){
+      return `Here are the strongest candidates I found — none stood out as a strong match on their own, but pick one below if you'd like to use one anyway.` +
+        (recommendedReason ? `<span class="workspace-hint">${escapeHtml(recommendedReason)}</span>` : '');
+    }
+    return `Here are the strongest candidates I found. I've gone with the one bordered below.` +
+      (recommendedReason ? `<div class="mini-field"><span class="mini-label">Why this one</span>${escapeHtml(recommendedReason)}</div>` : '');
+  }
+  function buildPaperCard(w, i, isActive, isRecommended, onSelect){
+    const journal = ((w.primary_location && w.primary_location.source) || {}).display_name || '';
+    const authors = getAuthors(w);
+    const authorStr = authors.length ? (authors.length > 2 ? authors.slice(0,2).join(', ') + ' et al.' : authors.join(', ')) : '';
+    const abstract = reconstructAbstract(w.abstract_inverted_index) || '';
+    const abs34 = ABS_3_4_JOURNALS.has(journal.toLowerCase());
+    const metaParts = [authorStr, journal + (abs34 ? ' · ABS 3/4' : ''), w.publication_year || ''].filter(Boolean);
+    const card = document.createElement('div');
+    card.className = 'paper-option' + (isRecommended ? ' recommended' : '') + (isActive ? ' active' : '');
+    card.innerHTML = `<h5>${escapeHtml(w.title)}${isRecommended ? '<span class="paper-badge">AI recommends</span>' : ''}${isActive ? '<span class="active-badge">Active</span>' : ''}</h5>
+      <div class="paper-meta">${escapeHtml(metaParts.join(' · '))}</div>
+      <div class="paper-snippet">${escapeHtml(abstract.slice(0,150))}${abstract.length>150?'…':''}</div>
+      ${isActive ? '' : `<div class="paper-select-row"><span class="qr-chip action">Use this paper</span></div>`}`;
+    if (!isActive){
+      card.querySelector('.paper-select-row .qr-chip').onclick = () => onSelect(i);
+    }
+    return card;
+  }
+
+  function buildNoneCard(isActive, onSelect){
+    const card = document.createElement('div');
+    card.className = 'paper-option' + (isActive ? ' active' : '');
+    card.innerHTML = `<h5>None of these — continue without a citation${isActive ? '<span class="active-badge">Active</span>' : ''}</h5>` +
+      (isActive ? '' : `<div class="paper-select-row"><span class="qr-chip action">Use this</span></div>`);
+    if (!isActive){
+      card.querySelector('.paper-select-row .qr-chip').onclick = () => onSelect(null);
+    }
+    return card;
+  }
+
+  function renderPaperCards(slotEl, shortlist, currentIdx, recommendedIndex, onSelect){
+    slotEl.innerHTML = '';
+
+    // The active pick (AI's recommendation until the person chooses otherwise) always shows in full.
+    if (currentIdx !== null && shortlist[currentIdx]){
+      slotEl.appendChild(buildPaperCard(shortlist[currentIdx], currentIdx, true, currentIdx === recommendedIndex, onSelect));
+    } else {
+      slotEl.appendChild(buildNoneCard(true, onSelect));
+    }
+
+    // Everything else stays collapsed behind an expand arrow, so the default view is just one paper.
+    const others = shortlist.map((w, i) => i).filter(i => i !== currentIdx);
+    const restWrap = document.createElement('div');
+    restWrap.className = 'paper-list-rest';
+    others.forEach(i => restWrap.appendChild(buildPaperCard(shortlist[i], i, false, i === recommendedIndex, onSelect)));
+    if (currentIdx !== null) restWrap.appendChild(buildNoneCard(false, onSelect));
+
+    const toggle = document.createElement('div');
+    toggle.className = 'paper-expand-toggle';
+    const otherCount = others.length + (currentIdx !== null ? 1 : 0);
+    toggle.innerHTML = `<svg class="icon expand-chevron"><use href="#i-chevron"/></svg>See ${otherCount} other candidate${otherCount === 1 ? '' : 's'}`;
+    toggle.onclick = () => {
+      const opening = restWrap.style.display !== 'flex';
+      restWrap.style.display = opening ? 'flex' : 'none';
+      toggle.classList.toggle('open', opening);
+    };
+
+    slotEl.appendChild(toggle);
+    slotEl.appendChild(restWrap);
+  }
+  function checklistTemplate(){
+    return `Finding useful research…
+      <ul class="checklist">
+        <li class="pending" data-idx="0"><div class="mark"></div>Identifying key themes / key words</li>
+        <li class="pending" data-idx="1"><div class="mark"></div>Searching Kingston University London</li>
+        <li class="pending" data-idx="2"><div class="mark"></div>Checking relevance (semantic + ABS 3/4)</li>
+        <li class="pending" data-idx="3"><div class="mark"></div>Shortlisting candidates for your review</li>
+      </ul>`;
+  }
+  function markChecklistDone(msgDiv, idx){
+    const li = msgDiv.querySelector(`.checklist li[data-idx="${idx}"]`);
+    if (!li) return;
+    li.classList.remove('pending'); li.classList.add('done');
+    li.querySelector('.mark').innerHTML = '<svg class="icon"><use href="#i-check"/></svg>';
+  }
+  function summarizeVpAsText(vp){
+    const job = (vp.customer_jobs && vp.customer_jobs[0]) || '';
+    const pain = (vp.customer_pains && vp.customer_pains[0]) || '';
+    return `A short summary: the organisation is trying to ${escapeHtml((job||'').toLowerCase())}, with a key pain being "${escapeHtml(pain)}".<span class="workspace-hint">Full breakdown mapped in the Live Workspace</span>`;
+  }
+  function buildFvpcButtonHtml(fnName){
+    return `<div class="quick-reply-row"><span class="qr-chip primary action" onclick="${fnName || 'startFvpcBuild'}()">Build the Future Value Proposition →</span></div>`;
+  }
+
+  function openWorkspaceBC(){
+    showView('workspaceBC');
+    runAuroraPipeline();
+  }
+  function openWorkspaceRA(){
+    showView('workspaceRA');
+    runAuroraPipelineRA();
+  }
+
+  function inlineFvpcHtml(vp, f){
+    const stageData = [
+      f.hidden_user_insights, f.future_pains, f.future_gains_user_foresights,
+      f.mental_model_shifts, f.future_worlds, f.impact_opportunities,
+    ];
+    const stages = STAGE_META.map((meta, i) => {
+      const data = stageData[i];
+      const items = Array.isArray(data) ? data : ((data && data.items) || []);
+      const reasoning = Array.isArray(data) ? null : (data && data.reasoning);
+      return { meta, items, reasoning };
+    });
+    const nowCells = [
+      ['Customer Jobs', vp.customer_jobs], ['Customer Pains', vp.customer_pains],
+      ['Customer Gains', vp.customer_gains], ['Products &amp; Services', vp.products_services],
+      ['Pain Relievers', vp.pain_relievers], ['Gain Creators', vp.gain_creators],
+    ];
+    const fpData = f.future_pains;
+    const fpItems = Array.isArray(fpData) ? fpData : ((fpData && fpData.items) || []);
+
+    return `<div class="template-card" style="max-width:none;margin-top:8px;">
+        <div class="template-header">
+          <div class="template-brand"><div class="orb" style="width:18px;height:18px;"></div>Future Value Proposition</div>
+        </div>
+        <div class="template-now-label">Today</div>
+        <div class="template-now-grid">${nowCells.map(([label, items]) =>
+          `<div class="template-now-cell"><h6>${label}</h6>${listHtml(items)}</div>`).join('')}</div>
+        <div class="pains-compare">
+          <div class="pains-compare-col"><h6 class="pains-compare-label then">Pains — Today</h6>${listHtml(vp.customer_pains)}</div>
+          <div class="pains-compare-arrow"><svg class="icon"><use href="#i-chevron"/></svg></div>
+          <div class="pains-compare-col"><h6 class="pains-compare-label now">Pains — Tomorrow</h6>${listHtml(fpItems)}</div>
+        </div>
+        <div class="template-arc-divider"><span>Becomes</span></div>
+        <div class="template-grid">${stages.map(({meta, items, reasoning}) => `
+          <div class="template-cell" style="--stage-color:${meta.color};">
+            <div class="template-cell-head"><svg class="icon stage-icon"><use href="#${meta.icon}"/></svg><h5>${escapeHtml(meta.label)}</h5></div>
+            ${listHtml(items)}
+            ${reasoning ? `<div class="fvpc-why-template"><span class="why-tag">What's changing</span>${escapeHtml(reasoning)}</div>` : ''}
+          </div>`).join('')}</div>
+        <div class="template-footer">Generated by AURORA · Kingston University London</div>
+      </div>
+      <div class="fvpc-actions" style="margin-top:16px;">
+        <span class="export-chip" style="cursor:pointer;" onclick="exportWord()"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Word</span>
+        <span class="export-chip" style="cursor:pointer;" onclick="exportPdf()"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PDF</span>
+        <span class="export-chip" style="cursor:pointer;" onclick="exportPptx()"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PowerPoint</span>
+      </div>`;
+  }
+
+  async function startFvpcBuild(){
+    if (!AURORA_STATE.currentVP) return;
+    const apiKey = document.getElementById('geminiKeyInput').value.trim();
+    const msg = appendMessage('ai', null, '<span class="thinking">Building the Future Value Proposition…</span>');
+    try {
+      let fvpc = AURORA_STATE.fvpc;
+      if (!fvpc){
+        fvpc = await buildFVPC(apiKey, AURORA_STATE.currentVP, AURORA_STATE.research);
+        AURORA_STATE.fvpc = fvpc;
+      }
+      setMessageBody(msg, inlineFvpcHtml(AURORA_STATE.currentVP, fvpc));
+    } catch (err) {
+      setMessageBody(msg, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
+    }
+  }
+
+  async function startFvpcBuildFromArticle(){
+    if (!AURORA_STATE.raUnderstanding || !AURORA_STATE.raImplications) return;
+    const apiKey = document.getElementById('geminiKeyInput').value.trim();
+    const msg = appendMessage('ai', null, '<span class="thinking">Inferring an illustrative Current Value Proposition, then synthesizing the Future Value Proposition…</span>');
+    try {
+      let fvpc = AURORA_STATE.fvpc;
+      let currentVP = AURORA_STATE.currentVP;
+      if (!fvpc){
+        currentVP = await inferIllustrativeVP(apiKey, AURORA_STATE.raUnderstanding, AURORA_STATE.raImplications);
+        AURORA_STATE.currentVP = currentVP;
+        const researchPayload = Object.assign({ title: 'Uploaded research article' }, AURORA_STATE.raUnderstanding, AURORA_STATE.raImplications);
+        AURORA_STATE.research = researchPayload;
+        fvpc = await buildFVPC(apiKey, currentVP, researchPayload);
+        AURORA_STATE.fvpc = fvpc;
+      }
+      setMessageBody(msg, inlineFvpcHtml(currentVP, fvpc));
+    } catch (err) {
+      setMessageBody(msg, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
+    }
+  }
+
+  async function runAuroraPipeline(){
+    ACTIVE_LOG_ID = 'pipelineLog';
+    const apiKey = document.getElementById('geminiKeyInput').value.trim();
+    const text = document.getElementById('challengeInput').value.trim();
+    const log = document.getElementById('pipelineLog');
+    log.innerHTML = '';
+    AURORA_STATE.currentVP = null; AURORA_STATE.research = null; AURORA_STATE.researchNotes = []; AURORA_STATE.fvpc = null;
+
+    if (!text){ showValidationToast('No challenge text to work from.'); return; }
+    appendMessage('user', null, escapeHtml(text));
+    if (!apiKey){ showValidationToast('Enter a Gemini API key in the top bar first.'); return; }
+
+    try {
+      // Direct: witty opener + the analysis itself, no separate 'understand vs map' split
+      let currentVP;
+      await pacedMessage(null, 'Reading the challenge…', 900, async () => {
+        currentVP = await mapCurrentVP(apiKey, text);
+        AURORA_STATE.currentVP = currentVP;
+        return `Let's unravel it. Here's where things stand today.` + currentVPCanvasHtml(currentVP);
+      });
+
+      // One smart research gate, replacing the old separate 'identify the main challenge' step
+      const msgResearch = await pacedMessage(null, '…', 600,
+        "Want a second opinion — from the research? I can pull genuinely relevant work from Kingston's own output to sharpen this.");
+      const choiceResearch = await waitForChoice(msgResearch.querySelector('.bubble'),
+        [{label:'Yes, bring in research', value:'yes', primary:true}, {label:'Not now', value:'skip'}]);
+      appendMessage('user', null, choiceResearch === 'yes' ? 'Yes, bring in research' : 'Not now');
+
+      if (choiceResearch === 'yes'){
+        await sleep(450);
+        // Checklist itself is the "thinking" indicator; pace each checkmark
+        const msg6 = appendMessage('ai', null, checklistTemplate());
+        const themes = await extractThemes(apiKey, currentVP);
+        markChecklistDone(msg6, 0);
+        await sleep(400);
+        const kingstonId = await resolveKingstonId();
+        const { shortlist, recommendedIndex, recommendedReason, notes } = await searchAndRankResearch(apiKey, themes, currentVP, kingstonId, async stage => {
+          if (stage === 'searched'){ markChecklistDone(msg6, 1); await sleep(400); }
+          if (stage === 'reranked'){ markChecklistDone(msg6, 2); await sleep(400); }
+          if (stage === 'selected'){ markChecklistDone(msg6, 3); await sleep(300); }
+        });
+
+        let research = null;
+        let reviewMsg = null;
+
+        function applySelection(idx){
+          research = idx !== null ? formatWork(shortlist[idx]) : null;
+          AURORA_STATE.research = research;
+          AURORA_STATE.fvpc = null; // stale -- rebuild next time it's requested
+          if (reviewMsg){
+            renderPaperCards(reviewMsg.querySelector('.paper-cards-slot'), shortlist, idx, recommendedIndex, applySelection);
+          }
+        }
+
+        if (shortlist.length === 0){
+          await pacedMessage(null, '…', 400, 'No OpenAlex results came back for any of the search themes.');
+        } else {
+          await sleep(450);
+          reviewMsg = appendMessage('ai', null, paperReviewIntroHtml(recommendedIndex, recommendedReason) + '<div class="paper-cards-slot"></div>');
+          renderPaperCards(reviewMsg.querySelector('.paper-cards-slot'), shortlist, recommendedIndex, recommendedIndex, applySelection);
+          research = recommendedIndex !== null ? formatWork(shortlist[recommendedIndex]) : null;
+        }
+
+        AURORA_STATE.research = research; AURORA_STATE.researchNotes = notes;
+
+        await sleep(450);
+        await pacedMessage(null, '…', 500,
+          'These findings feed directly into the Future Value Proposition below.' + buildFvpcButtonHtml());
+      } else {
+        await pacedMessage(null, '…', 500,
+          'No problem — you can still build the Future Value Proposition from the Current Value Proposition alone.' + buildFvpcButtonHtml());
+      }
+    } catch (err) {
+      appendMessage('ai', null, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
+      console.error(err);
+    }
+  }
+
+  async function runAuroraPipelineRA(){
+    ACTIVE_LOG_ID = 'pipelineLogRA';
+    const apiKey = document.getElementById('geminiKeyInput').value.trim();
+    const articleText = document.getElementById('articleInput').value.trim();
+    const log = document.getElementById('pipelineLogRA');
+    log.innerHTML = '';
+    AURORA_STATE.currentVP = null; AURORA_STATE.research = null; AURORA_STATE.fvpc = null;
+    AURORA_STATE.raUnderstanding = null; AURORA_STATE.raImplications = null;
+
+    if (!articleText){ showValidationToast('No article text to work from.'); return; }
+    appendMessage('user', null, escapeHtml(articleText.length > 600 ? articleText.slice(0, 600) + '…' : articleText));
+    if (!apiKey){ showValidationToast('Enter a Gemini API key in the top bar first.'); return; }
+
+    try {
+      // Step 2 -- real work
+      let understanding;
+      await pacedMessage(null, 'Reading the article…', 900, async () => {
+        understanding = await understandResearch(apiKey, articleText);
+        AURORA_STATE.raUnderstanding = understanding;
+        return `<div class="mini-field"><span class="mini-label">Research question</span>${escapeHtml(understanding.research_question)}</div>
+                <div class="mini-field"><span class="mini-label">Main theory</span>${escapeHtml(understanding.main_theory)}</div>
+                <div class="mini-field"><span class="mini-label">Method</span>${escapeHtml(understanding.method)}</div>
+                <div class="mini-field"><span class="mini-label">Findings</span>${escapeHtml(understanding.findings)}</div>`;
+      });
+
+      // Step 3 -- real work
+      let implications;
+      await pacedMessage(null, 'Translating into practical implications…', 800, async () => {
+        implications = await practicalImplications(apiKey, understanding);
+        AURORA_STATE.raImplications = implications;
+        return 'Translated into management, policy and entrepreneurial implications.';
+      });
+
+      // Step 4
+      await pacedMessage(null, '…', 500,
+        'Mapping these findings onto an illustrative Current Value Proposition, then Hidden User Insights, Future Pains, Future Gains / User Foresights, Mental Model Shifts, Future Worlds and Impact Opportunities.' +
+        buildFvpcButtonHtml('startFvpcBuildFromArticle'));
+    } catch (err) {
+      appendMessage('ai', null, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
+      console.error(err);
+    }
+  }
+
+  // ---- Home landing page: cycling placeholder, auto-resize, submit ----
+
+  const HOME_PLACEHOLDER_EXAMPLES = [
+    "A hospital's patient referral system is slow and error-prone…",
+    "Paste a research article on circular economy business models…",
+    "An SME is losing customers during onboarding…",
+    "A retail bank's digital transformation isn't landing with customers…",
+  ];
+
+  function startHomeTypewriter(){
+    const el = document.getElementById('homePromptInput');
+    if (!el) return;
+    let exampleIndex = 0, charIndex = 0, deleting = false;
+    function tick(){
+      if (document.activeElement === el || el.value){
+        setTimeout(tick, 400);
+        return;
+      }
+      const full = HOME_PLACEHOLDER_EXAMPLES[exampleIndex];
+      if (!deleting){
+        charIndex++;
+        el.placeholder = full.slice(0, charIndex);
+        if (charIndex >= full.length){ deleting = true; setTimeout(tick, 1700); return; }
+        setTimeout(tick, 32);
+      } else {
+        charIndex--;
+        el.placeholder = full.slice(0, charIndex);
+        if (charIndex <= 0){ deleting = false; exampleIndex = (exampleIndex + 1) % HOME_PLACEHOLDER_EXAMPLES.length; setTimeout(tick, 350); return; }
+        setTimeout(tick, 16);
+      }
+    }
+    tick();
+  }
+
+  function autoResizeHomeTextarea(){
+    const el = document.getElementById('homePromptInput');
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+  }
+
+  function submitHomePrompt(){
+    const input = document.getElementById('homePromptInput');
+    const text = input.value.trim();
+    if (!text){
+      const card = document.getElementById('homePromptCard');
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+      input.focus();
+      return;
+    }
+    const mode = document.getElementById('homeModeSelect').value;
+    input.value = '';
+    document.getElementById('homeFileInputStatus').textContent = '';
+
+    const homeView = document.getElementById('view-home');
+    homeView.classList.add('view-exiting');
+
+    setTimeout(() => {
+      homeView.classList.remove('view-exiting');
+      const targetViewName = mode === 'ra' ? 'workspaceRA' : 'workspaceBC';
+      const targetTextareaId = mode === 'ra' ? 'articleInput' : 'challengeInput';
+      showView(targetViewName);
+      document.getElementById(targetTextareaId).value = text;
+
+      const targetView = document.getElementById('view-' + targetViewName);
+      targetView.classList.add('view-entering');
+      setTimeout(() => {
+        targetView.classList.remove('view-entering');
+        // Chat-like: submitting is the trigger, no second click needed.
+        if (mode === 'ra') runAuroraPipelineRA(); else runAuroraPipeline();
+      }, 340);
+    }, 260);
+  }
+
+  (function initHomePrompt(){
+    const el = document.getElementById('homePromptInput');
+    if (!el) return;
+    el.addEventListener('input', autoResizeHomeTextarea);
+    el.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); submitHomePrompt(); }
+    });
+    startHomeTypewriter();
+  })();
+</script>
+</body>
+</html>
