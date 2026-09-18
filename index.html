@@ -368,7 +368,7 @@
     </div>
 
     <div class="body-row">
-      <div class="sidebar" id="sidebar">
+      <div class="sidebar collapsed" id="sidebar">
         <div class="sidebar-head">
           <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('collapsed')"><svg class="icon toggle-icon"><use href="#i-chevron"/></svg></button>
           <span class="pane-label-text">Navigate</span>
@@ -402,7 +402,7 @@
               <div class="prompt-file-status" id="homeFileInputStatus"></div>
             </div>
             <div class="hero-credit-bright">
-              <div class="hero-credit-line1">AURORA — Augmented University Research and Opportunity Realisation Assistant</div>
+              <div class="hero-credit-line1">AURORA - Augmented University Research and Opportunity Realisation Assistant</div>
               <div class="hero-credit-line2">by Dr Yannis Spyridis and Dr Evy Sakellariou, Kingston University London</div>
             </div>
           </div>
@@ -1398,7 +1398,7 @@ Ground this in the research understanding and practical implications provided --
     const metaParts = [authorStr, journal + (abs34 ? ' · ABS 3/4' : ''), w.publication_year || ''].filter(Boolean);
     const card = document.createElement('div');
     card.className = 'paper-option' + (isRecommended ? ' recommended' : '') + (isActive ? ' active' : '');
-    card.innerHTML = `<h5>${escapeHtml(w.title)}${isRecommended ? '<span class="paper-badge">AI recommends</span>' : ''}${isActive ? '<span class="active-badge">Active</span>' : ''}</h5>
+    card.innerHTML = `<h5>${escapeHtml(w.title)}${isRecommended ? '<span class="paper-badge">AURORA recommends</span>' : ''}${isActive ? '<span class="active-badge">Active</span>' : ''}</h5>
       <div class="paper-meta">${escapeHtml(metaParts.join(' · '))}</div>
       <div class="paper-snippet">${escapeHtml(abstract.slice(0,150))}${abstract.length>150?'…':''}</div>
       ${isActive ? '' : `<div class="paper-select-row"><span class="qr-chip action">Use this paper</span></div>`}`;
