@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AURORA — Prototype</title>
+<title>AURORA - Prototype</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,6 +77,13 @@
   .prompt-send-btn{width:38px;height:38px;border-radius:50%;border:none;background:#14141C;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;transition:transform .1s ease;padding:0;}
   .prompt-send-btn:hover{transform:scale(1.06);}
   .prompt-file-status{text-align:center;margin-top:12px;font-size:11.5px;color:#6B6B80;min-height:14px;}
+  .basis-tag{display:inline-block;font-size:8.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding:1px 5px;border-radius:6px;margin-left:3px;vertical-align:1px;white-space:nowrap;}
+  .basis-tag.brief{background:color-mix(in srgb,#34E0A1 24%,transparent);color:#0E9A6C;}
+  .basis-tag.research{background:color-mix(in srgb,#8B6CFF 20%,transparent);color:#6D46E8;}
+  .canvas-legend{font-size:10px;color:var(--text-faint);margin-top:14px;line-height:1.6;}
+  .inline-textarea{width:100%;box-sizing:border-box;margin-top:8px;border:1px solid var(--border);border-radius:10px;padding:9px 11px;font:inherit;font-size:12.5px;background:var(--surface);color:var(--text);resize:vertical;}
+  .prompt-hint{text-align:center;margin-top:8px;font-size:12px;color:#6B6B80;}
+  .prompt-hint.small{font-size:10.5px;margin-top:4px;opacity:.85;}
   .hero-credit-bright{position:absolute;left:0;right:0;bottom:26px;text-align:center;z-index:1;}
   .hero-credit-line1{font-size:11.5px;color:#6B6B80;font-weight:600;}
   .hero-credit-line2{font-size:11px;color:#9A9AAE;margin-top:3px;}
@@ -354,13 +361,12 @@
         <span class="crumb" id="crumb"></span>
       </div>
       <div class="navright">
-        <input type="password" id="geminiKeyInput" class="nav-key" placeholder="Gemini API key" title="Kept in this browser tab only — never written to this file, never sent anywhere but Google/OpenAlex.">
-        <select id="modelSelect" class="nav-model">
-          <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash</option>
-          <option value="gemini-3.7-flash">Gemini 3.7 Flash</option>
-          <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+        <input type="password" id="geminiKeyInput" class="nav-key" placeholder="Gemini API key" title="Kept in this browser tab only - never written to this file, never sent anywhere but Google/OpenAlex.">
+        <select id="modelSelect" class="nav-model" style="display:none;">
+          <option value="gemini-3.8-flash" selected>Gemini 3.8 Flash</option>
+          <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
           <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash Lite</option>
-          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+          <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
         </select>
         <span class="pill-btn outline"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Export</span>
         <div class="avatar"></div>
@@ -368,7 +374,7 @@
     </div>
 
     <div class="body-row">
-      <div class="sidebar collapsed" id="sidebar">
+      <div class="sidebar" id="sidebar">
         <div class="sidebar-head">
           <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('collapsed')"><svg class="icon toggle-icon"><use href="#i-chevron"/></svg></button>
           <span class="pane-label-text">Navigate</span>
@@ -400,6 +406,8 @@
                 </button>
               </div>
               <div class="prompt-file-status" id="homeFileInputStatus"></div>
+              <div class="prompt-hint">Share a business idea, challenge or brief, or paste or upload a published research article.</div>
+              <div class="prompt-hint small">What you add is sent to the Gemini API to generate the analysis, so only share what you are authorised to.</div>
             </div>
             <div class="hero-credit-bright">
               <div class="hero-credit-line1">AURORA - Augmented University Research and Opportunity Realisation Assistant</div>
@@ -446,10 +454,10 @@
               <h2 class="disp" style="margin:0;font-size:19px;">Saved Insights</h2>
             </div>
             <div class="lib-grid">
-              <div class="lib-card"><div class="lib-tags"><span class="tag">Personal note</span></div><h4>Follow up on data-sharing access</h4><p class="note-body">Check with the KE team before the next workshop — access constraints may reshape the Current Value Proposition.</p><span class="caption">NHS Digital Transformation</span></div>
-              <div class="lib-card"><div class="lib-tags"><span class="tag">Favourite idea</span></div><h4>Reframe "efficiency" as "trust"</h4><p class="note-body">A mental model shift worth carrying into other projects — efficiency framing undersells the relationship value at stake.</p><span class="caption">Airbus Future Value</span></div>
-              <div class="lib-card"><div class="lib-tags"><span class="tag">Reflection note</span></div><h4>Shared future world?</h4><p class="note-body">Retail Banking's future pains map closely to SME Innovation's — worth checking for a shared Future World across both.</p><span class="caption">Retail Banking</span></div>
-              <div class="lib-card"><div class="lib-tags"><span class="tag">Favourite idea</span></div><h4>Foresight, not forecast</h4><p class="note-body">Frame Future Gains as user foresights, not predictions — keeps the canvas honest about uncertainty.</p><span class="caption">SME Innovation</span></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Personal note</span></div><h4>Follow up on data-sharing access</h4><p class="note-body">Check with the KE team before the next workshop - access constraints may reshape the Current Value Proposition.</p><span class="caption">NHS Digital Transformation</span></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Favourite idea</span></div><h4>Reframe "efficiency" as "trust"</h4><p class="note-body">A mental model shift worth carrying into other projects - efficiency framing undersells the relationship value at stake.</p><span class="caption">Airbus Future Value</span></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Reflection note</span></div><h4>Shared future world?</h4><p class="note-body">Retail Banking's future pains map closely to SME Innovation's - worth checking for a shared Future World across both.</p><span class="caption">Retail Banking</span></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Favourite idea</span></div><h4>Foresight, not forecast</h4><p class="note-body">Frame Future Gains as user foresights, not predictions - keeps the canvas honest about uncertainty.</p><span class="caption">SME Innovation</span></div>
             </div>
           </div>
         </div>
@@ -463,11 +471,11 @@
             <div class="lib-card" style="margin-bottom:16px;">
               <div class="lib-tags"><span class="tag">Guide</span></div>
               <h4 style="font-size:15px;">How to use the Future Value Proposition Canvas</h4>
-              <p class="note-body">The core walkthrough — from mapping a Current Value Proposition through to Impact Opportunities.</p>
+              <p class="note-body">The core walkthrough - from mapping a Current Value Proposition through to Impact Opportunities.</p>
             </div>
             <div class="lib-grid">
               <div class="lib-card"><div class="lib-tags"><span class="tag">Short guide</span></div><h4>Writing a strong business challenge upload</h4><p class="note-body">What to include so AURORA can map an accurate Current Value Proposition.</p></div>
-              <div class="lib-card"><div class="lib-tags"><span class="tag">Example</span></div><h4>Sample FVPC — NHS Digital Transformation</h4><p class="note-body">A worked example, start to finish, on a real project type.</p></div>
+              <div class="lib-card"><div class="lib-tags"><span class="tag">Example</span></div><h4>Sample FVPC - NHS Digital Transformation</h4><p class="note-body">A worked example, start to finish, on a real project type.</p></div>
               <div class="lib-card"><div class="lib-tags"><span class="tag">Case study</span></div><h4>How Airbus reframed customer trust</h4><p class="note-body">A Mental Model Shift that changed the resulting Impact Opportunities.</p></div>
               <div class="lib-card"><div class="lib-tags"><span class="tag">Video</span></div><h4>AURORA in four minutes</h4><p class="note-body">A short walkthrough of both Option 1 and Option 2 journeys.</p></div>
             </div>
@@ -481,8 +489,8 @@
               <h2 class="disp" style="margin:0;font-size:19px;">Reports &amp; Exports</h2>
             </div>
             <div class="lib-grid">
-              <div class="lib-card"><h4>NHS Digital Transformation — Future Value Proposition</h4><div class="lib-actions" style="margin-top:2px;"><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Word</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PDF</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PowerPoint</span></div></div>
-              <div class="lib-card"><h4>Airbus Future Value — Future Value Proposition</h4><div class="lib-actions" style="margin-top:2px;"><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Word</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PDF</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PowerPoint</span></div></div>
+              <div class="lib-card"><h4>NHS Digital Transformation - Future Value Proposition</h4><div class="lib-actions" style="margin-top:2px;"><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Word</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PDF</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PowerPoint</span></div></div>
+              <div class="lib-card"><h4>Airbus Future Value - Future Value Proposition</h4><div class="lib-actions" style="margin-top:2px;"><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Word</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PDF</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PowerPoint</span></div></div>
               <div class="lib-card"><h4>Blank Future Value Proposition template</h4><div class="lib-actions" style="margin-top:2px;"><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>Word</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PDF</span><span class="export-chip"><svg class="icon" style="width:12px;height:12px;"><use href="#i-download"/></svg>PowerPoint</span></div></div>
             </div>
           </div>
@@ -565,7 +573,7 @@
             <div class="fvpc-head">
               <div>
                 <h2 class="disp" id="fvpcTitle">Build the Future Value Proposition</h2>
-                <p id="fvpcSub">Step 9 — mapping insights stage by stage</p>
+                <p id="fvpcSub">Step 9 - mapping insights stage by stage</p>
               </div>
               <div class="seg-tabs" id="fvpcSeg">
                 <div class="seg-tab active" data-view="flow" onclick="setFvpcMode('flow')">Build (Step 9)</div>
@@ -610,12 +618,12 @@
 
                 <div class="pains-compare">
                   <div class="pains-compare-col">
-                    <h6 class="pains-compare-label then">Pains — Today</h6>
+                    <h6 class="pains-compare-label then">Pains today</h6>
                     <div id="painsThenList"></div>
                   </div>
                   <div class="pains-compare-arrow"><svg class="icon"><use href="#i-chevron"/></svg></div>
                   <div class="pains-compare-col">
-                    <h6 class="pains-compare-label now">Pains — Tomorrow</h6>
+                    <h6 class="pains-compare-label now">Pains tomorrow</h6>
                     <div id="painsNowList"></div>
                   </div>
                 </div>
@@ -707,8 +715,8 @@
     const isFlow = mode==='flow';
     document.getElementById('fvpcFlow').style.display = isFlow ? '' : 'none';
     document.getElementById('fvpcTemplate').style.display = isFlow ? 'none' : '';
-    document.getElementById('fvpcTitle').textContent = isFlow ? 'Build the Future Value Proposition' : 'Future Value Proposition — Template';
-    document.getElementById('fvpcSub').textContent = isFlow ? 'Step 9 — mapping insights stage by stage' : 'Step 10 — the finished visual template';
+    document.getElementById('fvpcTitle').textContent = isFlow ? 'Build the Future Value Proposition' : 'Future Value Proposition - Template';
+    document.getElementById('fvpcSub').textContent = isFlow ? 'Step 9 - mapping insights stage by stage' : 'Step 10 - the finished visual template';
   }
 
   // =====================================================================
@@ -717,8 +725,44 @@
   // never written to this file, never sent anywhere but Google/OpenAlex.
   // =====================================================================
 
-  const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
+  const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash';
+  const FALLBACK_GEMINI_MODEL = 'gemini-3.5-flash-lite'; // used once if the main model is busy or rate-limited
+  // The model picker is hidden for visitors. Add ?direct=1 to the page URL to show it while developing.
+  (function showPickerForDevelopers(){
+    if (!/[?&]direct=1/.test(location.search)) return;
+    const el = document.getElementById('modelSelect');
+    if (el) el.style.display = '';
+  })();
   const EMBED_MODEL = 'gemini-embedding-001'; // best guess -- see tracker #7
+
+  // Proxy mode. Leave empty to have each visitor type their own Gemini key (direct calls).
+  // After deploying the Cloudflare Worker in aurora-proxy/, paste its URL here, for example
+  // 'https://aurora-proxy.yourname.workers.dev'. The key then lives only on the Worker.
+  // Add ?direct=1 to the page URL to bypass the proxy and use your own key while developing.
+  const CONFIGURED_PROXY_URL = 'https://aurora-proxy.aurora-ku.workers.dev';
+  let AURORA_PROXY_URL = /[?&]direct=1/.test(location.search) ? '' : CONFIGURED_PROXY_URL.replace(/\/+$/, '');
+
+  function geminiRequest(model, action, secret){
+    if (AURORA_PROXY_URL){
+      // In proxy mode the 'secret' typed in the top bar is the demo passcode, not an API key.
+      return { url: `${AURORA_PROXY_URL}/gemini/${model}:${action}`, headers: { 'Content-Type': 'application/json', 'X-Aurora-Passcode': secret } };
+    }
+    return { url: `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}`, headers: { 'x-goog-api-key': secret, 'Content-Type': 'application/json' } };
+  }
+  function missingKeyMessage(){
+    return AURORA_PROXY_URL ? 'Enter the demo passcode in the top bar first.' : 'Enter a Gemini API key in the top bar first.';
+  }
+  (async function initProxyMode(){
+    if (!AURORA_PROXY_URL) return;
+    const el = document.getElementById('geminiKeyInput');
+    if (!el) return;
+    el.placeholder = 'Demo passcode';
+    el.title = 'Ask the AURORA team for the demo passcode';
+    try {
+      const j = await (await fetch(AURORA_PROXY_URL + '/health')).json();
+      if (j && j.passcodeRequired === false){ el.value = 'proxy'; el.style.display = 'none'; }
+    } catch (e) { /* proxy unreachable: leave the box visible, calls will report the error */ }
+  })();
   const KINGSTON_ROR = '05bbqza97';
   const ABS_3_4_JOURNALS = new Set([
     'academy of management journal', 'academy of management review',
@@ -733,7 +777,7 @@
     'entrepreneurship theory and practice', 'organization studies',
   ]);
 
-  const AURORA_STATE = { currentVP: null, research: null, researchNotes: [], fvpc: null, raUnderstanding: null, raImplications: null };
+  const AURORA_STATE = { brief: null, currentVP: null, overlooked: null, research: null, researchInsight: null, researchScope: null, researchRelevance: 'none', researchNotes: [], fvpc: null, bmc: null, articleAnalysis: null };
   let ACTIVE_LOG_ID = 'pipelineLog'; // which flow's conversation log appendMessage/pacedMessage write into
 
   function getSelectedModel(){
@@ -747,7 +791,7 @@
     return d.innerHTML;
   }
   function listHtml(items){
-    if (!items || !items.length) return '<div class="caption">—</div>';
+    if (!items || !items.length) return '<div class="caption">Not established.</div>';
     return '<ul class="real-list">' + items.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul>';
   }
 
@@ -797,7 +841,7 @@
       if (!text) throw new Error('No extractable text found in this file (it may be a scanned/image-only PDF).');
       document.getElementById(targetTextareaId).value = text;
       if (targetTextareaId === 'homePromptInput') autoResizeHomeTextarea();
-      if (statusEl) statusEl.textContent = `Loaded ${file.name} — ${text.length.toLocaleString()} characters. Edit below if needed.`;
+      if (statusEl) statusEl.textContent = `Loaded ${file.name}: ${text.length.toLocaleString()} characters. Edit below if needed.`;
     } catch (err){
       if (statusEl) statusEl.textContent = `Couldn't read ${file.name}: ${err.message}`;
       console.error(err);
@@ -806,25 +850,43 @@
 
   async function callGeminiJSON(apiKey, systemPrompt, userContent, temperature){
     temperature = temperature === undefined ? 0.3 : temperature;
-    const model = getSelectedModel();
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-      method: 'POST',
-      headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: userContent }] }],
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        generationConfig: { responseMimeType: 'application/json', temperature },
-      }),
+    const body = JSON.stringify({
+      contents: [{ parts: [{ text: userContent }] }],
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      generationConfig: { responseMimeType: 'application/json', temperature },
     });
-    if (!res.ok) throw new Error(`Gemini generateContent (${model}) ${res.status}: ${(await res.text()).slice(0,300)}`);
-    const data = await res.json();
-    return JSON.parse(data.candidates[0].content.parts[0].text);
+    const main = getSelectedModel();
+    // Busy or rate-limited: wait briefly and retry the same model once, then try the fallback model once.
+    const attempts = [{ model: main, wait: 0 }, { model: main, wait: 1500 }];
+    if (FALLBACK_GEMINI_MODEL !== main) attempts.push({ model: FALLBACK_GEMINI_MODEL, wait: 800 });
+    let lastErr = null;
+    for (const a of attempts){
+      if (a.wait) await sleep(a.wait);
+      const req = geminiRequest(a.model, 'generateContent', apiKey);
+      let res;
+      try {
+        res = await fetch(req.url, { method: 'POST', headers: req.headers, body });
+      } catch (netErr) {
+        lastErr = new Error(`Network error calling Gemini (${a.model}): ${netErr.message}`);
+        continue;
+      }
+      if (res.ok){
+        if (a.model !== main) console.warn(`AURORA: ${main} was busy, answered by ${a.model}`);
+        const data = await res.json();
+        return JSON.parse(data.candidates[0].content.parts[0].text);
+      }
+      const detail = (await res.text()).slice(0, 300);
+      lastErr = new Error(`Gemini generateContent (${a.model}) ${res.status}: ${detail}`);
+      if (![429, 500, 502, 503, 504].includes(res.status)) throw lastErr; // not a busy error: retrying will not help
+    }
+    throw new Error('The model is busy right now, even after retrying. Please try again in a minute. (' + (lastErr ? lastErr.message : 'no response') + ')');
   }
 
   async function embedTexts(apiKey, texts){
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${EMBED_MODEL}:batchEmbedContents`, {
+    const req = geminiRequest(EMBED_MODEL, 'batchEmbedContents', apiKey);
+    const res = await fetch(req.url, {
       method: 'POST',
-      headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
+      headers: req.headers,
       body: JSON.stringify({
         requests: texts.map(t => ({ model: `models/${EMBED_MODEL}`, content: { parts: [{ text: t }] } })),
       }),
@@ -875,30 +937,104 @@
     };
   }
 
+  // =====================================================================
+  // AURORA prompt layer. Built from Dr Evy Sakellariou's system prompt
+  // (verbatim copy kept in aurora_evy_system_prompt_verbatim.txt).
+  // AURORA_CORE goes into every call; each stage then adds only the
+  // sections of her prompt that stage needs.
+  // =====================================================================
+
+  const AURORA_CORE = `You are AURORA (Augmented University Research & Opportunity Realisation Assistant), a research-informed AI intelligence system for entrepreneurs, business leaders and educators. Your purpose is to leverage published academic research to stimulate new thinking about business challenges, customer insights and value propositions, so that organisations can identify new opportunities for meaningful value creation.
+
+Do not merely summarise research, analyse an organisational problem or populate a business canvas. Act as an intellectually independent, research-informed system that helps the user recognise what they may not have considered: the assumptions underlying their understanding of customer value, alternative perspectives, unmet needs, underlying motivations and new possibilities for value. Your defining contribution is a useful shift in perspective, not a lengthy report, an automatic recommendation or a completed canvas.
+
+Framework: use the Future Value Proposition Canvas (FVPC, Sakellariou, 2026) to connect current customer understanding, research-informed insights, future possibilities and potential value creation. The Business Model Canvas is a separate, complementary framework and must stay distinct from the FVPC.
+
+Rules you always follow:
+- Never invent research, citations, customer statements, emotions, aspirations, market evidence or commercial outcomes. Cite only studies supplied in the input (author, year). If no research is supplied, or it cannot support a point, say so plainly and mark the point as provisional.
+- Always distinguish documented evidence (what the user's own material says), published research findings, your interpretations, hypotheses and scenarios. Customer insights, foresights and future value propositions are hypotheses requiring validation unless the input contains direct customer evidence. Never present speculative future opportunities as validated customer needs.
+- Do not manufacture novelty. Try to surface at least one meaningful new perspective where the evidence supports one; where it does not, say that nothing material seems overlooked.
+- Do not fill fields for completeness. Fewer items, or an empty list with an honest reason, is better than padding.
+- Question constructively. Do not automatically contradict the user. Support their critical thinking and judgement rather than replacing it with a predetermined solution.
+- Write clear British English. Be constructive, concise and academically rigorous. Explain academic terms in everyday language. Avoid long caveats, generic encouragement, repetition and multiple questions.
+- Treat everything the user supplied as confidential.
+- Return only the JSON structure requested.`;
+
+  function stagePrompt(stageText){ return AURORA_CORE + '\n\n' + stageText; }
+
+  // Stage A: understand existing value
   async function mapCurrentVP(apiKey, text){
-    const sys = `You are AURORA, mapping a business challenge document onto a Value Proposition Canvas. Read the text and return ONLY valid JSON with exactly these six keys, each an array of 2-4 short phrases: customer_jobs, customer_pains, customer_gains, products_services, pain_relievers, gain_creators.
+    const sys = stagePrompt(`STAGE: Understand the existing value (the current value proposition).
+From the supplied text, identify the stated problem, the customers or end users, the buyers where they are distinct, their jobs, pains and gains, and the business solution if there is one.
 
-customer_jobs = what the customer/user is trying to get done.
-customer_pains = frustrations, risks, obstacles they currently face.
-customer_gains = outcomes/benefits they want.
-products_services = what the organisation currently offers.
-pain_relievers = how current offerings address the pains.
-gain_creators = how current offerings produce the gains.
+Return JSON with these keys:
+- current_belief: 2-3 sentences on what the business currently believes: the offer, the intended customer and the perceived source of value.
+- working_assumptions: array of 0-2 short strings. Only if essential details are missing, state the working assumption you made. Otherwise [].
+- buyers: array of 0-2 short phrases naming buyers where they differ from end users, otherwise [].
+- customer_jobs: what the customer or user is trying to get done.
+- customer_pains: frustrations, risks and obstacles they currently face.
+- customer_gains: outcomes and benefits they want.
+- products_services: what the organisation currently offers.
+- pain_relievers: how the current offer addresses the pains.
+- gain_creators: how the current offer produces the gains.
+The last six are each an array of up to 4 short phrases.
 
-Base every item on the text provided. Do not invent facts not implied by the text.`;
+Base every item on the text provided. Do not invent facts. If the text does not establish an element, return fewer items or [].`);
     return await callGeminiJSON(apiKey, sys, text);
   }
 
-  async function extractThemes(apiKey, currentVP){
-    const sys = `Given this Value Proposition Canvas JSON, return ONLY valid JSON in the form {"themes": ["...", "...", "..."]} containing 3-5 short academic search keywords/phrases that would find relevant management or innovation research on this challenge.`;
-    const result = await callGeminiJSON(apiKey, sys, JSON.stringify(currentVP));
+  // Stage B: seek an insight, not merely another problem statement
+  async function analyseOverlooked(apiKey, text, currentVP){
+    const sys = stagePrompt(`STAGE: What might be overlooked. Apply this reasoning internally; the user will see only a short result, not a questionnaire.
+
+Critically examine the organisation's assumptions through two complementary perspectives.
+1. Problem framing: how has the organisation defined its challenge, and is that framing led by an evidence-based end-user or customer insight, or by assumptions, existing knowledge or established ways of thinking?
+2. Customer insight and foresight (Sakellariou): considering the end user or customer, what does the material actually say about (a) their values and beliefs, (b) their emotional responses, (c) their current experience with the business, domain, product or service, and (d) their future needs and aspirations (foresights)? If the material does not state something, set that field to null. Do not invent it.
+
+A customer problem describes a difficulty; a customer insight is a deeper, evidence-informed explanation of a need, tension, motivation or aspiration that could change a value proposition. When justified, form ONE candidate insight in this style: "Customers may not primarily need X; they may be trying to achieve Y because Z." Surface it only if it could make a material difference.
+
+Return JSON:
+{
+  "problem_framing": "1-2 sentences",
+  "customer_perspective": {"values_and_beliefs": string or null, "emotional_responses": string or null, "current_experience": string or null, "future_needs_aspirations": string or null},
+  "candidate_insight": string or null,
+  "no_new_perspective_reason": string or null,
+  "how_to_find_out": ["...", "..."]
+}
+- no_new_perspective_reason: set only when candidate_insight is null; say plainly why nothing material seems overlooked.
+- how_to_find_out: 0-3 practical, low-cost ways the user could elicit the customer information the material lacks (for example speaking with a few customers, reviewing recent complaints). Do not cite studies.
+Each string at most 35 words. The candidate insight is a hypothesis, not a finding.`);
+    return await callGeminiJSON(apiKey, sys, JSON.stringify({ brief: String(text).slice(0, 12000), current_value_proposition: currentVP }));
+  }
+
+  async function extractThemes(apiKey, currentVP, overlooked){
+    const sys = `Given this Value Proposition Canvas JSON (and, if present, a candidate customer insight), return ONLY valid JSON in the form {"themes": ["...", "...", "..."]} containing 3-5 short academic search keywords/phrases that would find relevant management or innovation research on this challenge. Include at least one phrase aimed at the underlying customer need or the candidate insight, not only the surface problem, because the research is meant to challenge existing thinking.`;
+    const payload = { value_proposition: currentVP, candidate_insight: (overlooked && overlooked.candidate_insight) || null };
+    const result = await callGeminiJSON(apiKey, sys, JSON.stringify(payload));
     return result.themes;
   }
 
-  async function identifyMainChallenge(apiKey, currentVP){
-    const sys = `You are AURORA. Given this Value Proposition Canvas JSON, identify the single main organisational challenge in one or two plain sentences -- the crux of what's going wrong that everything else stems from. Return ONLY valid JSON: {"challenge": "..."}`;
-    const result = await callGeminiJSON(apiKey, sys, JSON.stringify(currentVP));
-    return result.challenge;
+  // Stage C: use research to challenge thinking
+  async function analysePaper(apiKey, currentVP, overlooked, work, scope){
+    const sys = stagePrompt(`STAGE: What research suggests.
+You are given the organisation's current value proposition, the candidate insight (which may be null), and ONE paper (title, authors, year, journal, abstract). search_scope says whether it is Kingston University / Kingston Business School research ("kingston"), research from outside Kingston ("external"), or an article the user supplied ("user_supplied").
+
+Bring in the one especially relevant finding the abstract supports. Explain it in everyday terms and make clear that applying it to this business is your interpretation. Identify how the finding might challenge an existing assumption, introduce a different interpretation of customer needs, or suggest a new dimension of customer value. Prioritise the implications for new thinking over a descriptive summary. Do not write a literature review. Use only what the text supplied states; if it does not report a usable finding, say so in "finding" rather than inventing one.
+
+Return JSON:
+{
+  "finding": "1-2 sentences, everyday language: what the paper found",
+  "context": "short: the setting, sample or method, as far as the text states",
+  "challenge": "1-2 sentences beginning 'This may suggest' or similar: how the finding could challenge an assumption or open a new dimension of customer value for THIS business (your interpretation)",
+  "limit": "1 sentence: the most important boundary on transferring the finding to this business"
+}`);
+    const payload = {
+      current_value_proposition: currentVP,
+      candidate_insight: (overlooked && overlooked.candidate_insight) || null,
+      search_scope: scope,
+      paper: { title: work.title, authors: (work.authors || []).slice(0, 6), year: work.year, journal: work.journal, abstract: String(work.abstract || '').slice(0, 1800) },
+    };
+    return await callGeminiJSON(apiKey, sys, JSON.stringify(payload));
   }
 
   async function searchAndRankResearch(apiKey, themes, currentVP, institutionId, onProgress){
@@ -919,12 +1055,13 @@ Base every item on the text provided. Do not invent facts not implied by the tex
       scope = 'general (Kingston filter dropped)';
     }
     if (onProgress) await onProgress('searched');
+    const scopeKey = scope === 'Kingston-affiliated' ? 'kingston' : 'external';
 
     const candidates = Object.values(candidatesById);
     if (candidates.length === 0){
       notes.push('No OpenAlex results found for any theme at all.');
       if (onProgress) { await onProgress('reranked'); await onProgress('selected'); }
-      return { shortlist: [], recommendedIndex: null, recommendedReason: null, notes };
+      return { shortlist: [], recommendedIndex: null, recommendedReason: null, notes, scope: scopeKey };
     }
     notes.push(`Pulled ${candidates.length} unique ${scope} candidates across ${themes.length} theme queries.`);
 
@@ -946,20 +1083,22 @@ Base every item on the text provided. Do not invent facts not implied by the tex
       return {
         index: i, title: w.title, journal,
         journal_is_abs34: ABS_3_4_JOURNALS.has(journal.toLowerCase()),
-        abstract_snippet: reconstructAbstract(w.abstract_inverted_index).slice(0,600),
+        abstract_snippet: reconstructAbstract(w.abstract_inverted_index).slice(0,900),
       };
     });
 
-    const sys = `You are AURORA, recommending the single best-matching research paper for a business challenge, subject to the user's confirmation. You are given the challenge's Value Proposition Canvas and a shortlist of candidate papers, already pre-filtered for semantic similarity (title, journal, whether the journal is on an ABS 3/4 allowlist, and an abstract snippet).
+    const sys = AURORA_CORE + `
+
+STAGE: Choose the research. You are recommending the single best-matching research paper for a business challenge, subject to the user's confirmation. You are given the challenge's Value Proposition Canvas and a shortlist of candidate papers, already pre-filtered for semantic similarity (title, journal, whether the journal is on an ABS 3/4 allowlist, and an abstract snippet).
 
 Return ONLY valid JSON:
 {"selected_index": <int>, "is_genuinely_relevant": true/false, "reason": "..."}
 
 Always select the single best candidate from the list -- selected_index must be a real index, never null, even if nothing on the list is a strong match. A partial or tangential match is still more useful to the user than nothing, as long as you are honest about it.
 
-Judge on actual subject-matter relevance to the challenge first. Prefer an ABS 3/4 journal only when relevance is roughly comparable between candidates -- a topically strong match in a non-listed journal beats a topically weak match in a listed one. Set is_genuinely_relevant to true only if the pick is a genuinely strong match; set it to false if you are only picking it because it is the best of a weak field, and in that case make "reason" explicit about exactly why it is a stretch rather than writing a generic justification.`;
+Judge on actual subject-matter relevance to the challenge first. Among relevant candidates, prefer the one whose findings are most likely to challenge an existing assumption or suggest a different understanding of customer value, rather than a merely descriptive match. search_scope tells you whether the pool is Kingston research or a wider fallback. Prefer an ABS 3/4 journal only when relevance is roughly comparable between candidates -- a topically strong match in a non-listed journal beats a topically weak match in a listed one. Set is_genuinely_relevant to true only if the pick is a genuinely strong match; set it to false if you are only picking it because it is the best of a weak field, and in that case make "reason" explicit about exactly why it is a stretch rather than writing a generic justification.`;
 
-    const judgment = await callGeminiJSON(apiKey, sys, JSON.stringify({ current_value_proposition: currentVP, candidates: candidateSummaries }));
+    const judgment = await callGeminiJSON(apiKey, sys, JSON.stringify({ current_value_proposition: currentVP, candidate_insight: (AURORA_STATE.overlooked && AURORA_STATE.overlooked.candidate_insight) || null, search_scope: scopeKey, candidates: candidateSummaries }));
     if (onProgress) await onProgress('selected');
 
     let idx = judgment.selected_index;
@@ -972,53 +1111,100 @@ Judge on actual subject-matter relevance to the challenge first. Prefer an ABS 3
     } else {
       notes.push(`Selected candidate ${idx} -- reasoning: ${judgment.reason}`);
     }
-    return { shortlist, recommendedIndex: idx, recommendedReason: judgment.reason, isRelevant, notes };
+    return { shortlist, recommendedIndex: idx, recommendedReason: judgment.reason, isRelevant, notes, scope: scopeKey };
   }
 
-  async function buildFVPC(apiKey, currentVP, research){
-    const sys = `You are AURORA, building the Future Value Proposition for a business challenge. You are given the organisation's Current Value Proposition and (if available) a relevant piece of academic research.
+  // Stage E-G: explore future value, business model implications, smallest evidence check
+  async function buildFVPC(apiKey, currentVP, research, extras){
+    extras = extras || {};
+    const sys = stagePrompt(`STAGE: Future value. Build the Future Value Proposition Canvas (FVPC, Sakellariou, 2026) from the inputs.
 
-Return ONLY valid JSON with exactly these six keys, each an object of the form {"items": ["...", "..."], "reasoning": "..."}:
-hidden_user_insights, future_pains, future_gains_user_foresights, mental_model_shifts, future_worlds, impact_opportunities
+Inputs: current_value_proposition (it may be the text "Not established by this article."), candidate_insight (may be null), research (may be null; if present it includes the paper's details and an analysis of it), and research_relevance: "strong", "weak", "none", "user_chosen" (the user picked it; relevance not assessed) or "user_supplied" (an article the user provided).
 
-"items" = 2-4 short phrases for that stage.
-"reasoning" = one short sentence explaining specifically which part of the Current Value Proposition and/or the research these items follow from -- not a generic justification, a traceable one.
+Canvas logic. Current Value Proposition (given). Future Customer Discovery: 7 hidden_user_insights, 8 future_pains, 9 future_gains_user_foresights. Future Value Creation: 10 mental_model_shifts, 11 future_worlds, 12 impact_opportunities.
+- hidden_user_insights: non-obvious needs, motivations or behaviours implied by the inputs, not yet addressed by the current offer.
+- future_pains: new or evolving frustrations customers may face as needs, behaviour or context shift.
+- future_gains_user_foresights: future benefits or outcomes customers may come to expect (aspirations, plausible changes in expectations).
+- mental_model_shifts: how the organisation or its customers should change the way they think about this problem.
+- future_worlds: plausible future scenarios or contexts the organisation may need to operate in.
+- impact_opportunities: concrete opportunities the organisation could act on, grounded in everything above.
 
-hidden_user_insights = non-obvious needs/behaviours implied by the inputs, not yet addressed by current products/services.
-future_pains = new or evolving frustrations customers may face as needs, behaviour, or context shift.
-future_gains_user_foresights = future benefits or outcomes customers may come to expect.
-mental_model_shifts = how the organisation or its customers should change the way they think about this problem.
-future_worlds = plausible future scenarios/contexts the organisation may need to operate in.
-impact_opportunities = concrete opportunities the organisation could act on, grounded in everything above.
+Trace the transitions from current evidence through insights to future opportunities, and identify missing evidence. Do not fill a stage merely for completeness: if the inputs cannot support a stage, return an empty items list and say why in its reasoning.
 
-Ground every item and its reasoning in the Current Value Proposition and the research provided. If no research is provided, reason from the Current Value Proposition alone and say so in the reasoning rather than inventing a citation.`;
-    return await callGeminiJSON(apiKey, sys, JSON.stringify({ current_value_proposition: currentVP, research_findings: research }));
+Return ONLY valid JSON. Each of the six stage keys is an object {"items": [...], "basis": [...], "reasoning": "..."}:
+- items: up to 4 short phrases (at most 18 words each).
+- basis: an array the same length as items. Each entry is one of "brief" (stated in the user's own material), "research" (supported by the supplied research), "interpretation" (your reasoning from either), or "hypothesis" (a customer need or future possibility that needs validating). Hidden insights, future pains and foresights are hypotheses unless the brief states them.
+- reasoning: one short sentence saying specifically which part of the current value proposition and/or research these items follow from. Traceable, not generic.
+
+Also return these keys:
+- future_value_propositions: an array of 1-2 objects {"customer_insight", "future_value_proposition", "future_products_services", "research_foundation"}.
+   customer_insight: in the style "Customers may not primarily need X; they may be trying to achieve Y because Z", drawing on the stages above (a hypothesis).
+   future_value_proposition: how the organisation could improve its current products or services in the short term by addressing these needs and solving these problems.
+   future_products_services: how products and services could evolve to meet customers' future aspirations, with more breakthrough or unexpected features, experiences or benefits.
+   research_foundation: the supplied paper's author(s) and year, plus one sentence on how it informs this proposition. Cite ONLY the supplied paper, with the authors and year given in the input; if authors or year are not given, do not make them up. If there is no research, or research_relevance is "weak" or "none", say so plainly, for example "No supporting research applied; this is a reasoned hypothesis."
+   Prioritise one or two meaningful opportunities that challenge existing assumptions. If none is warranted by the evidence, return [].
+- business_model_questions: 0-2 short questions on how the opportunity might challenge assumptions about customer segments, relationships, channels or revenue (desirability, feasibility, viability, without claiming proof). [] if not relevant.
+- smallest_evidence_check: {"uncertainty": "the most consequential uncertainty", "check": "an accessible way to check it"}. Examples of checks: reviewing five recent customer complaints, speaking with a few customers, comparing lost-sales reasons, observing an actual purchase journey, inspecting existing customer-service data, testing two alternative value proposition messages. These are illustrative, not statistically conclusive.
+- missing_evidence: 0-3 short strings naming evidence the canvas still lacks.
+
+If no research is supplied, reason from the current value proposition alone and say so in the reasoning rather than inventing a citation. If the current value proposition is "Not established by this article.", do not invent one; reason from the research alone and keep every item framed as what organisations in this context might face.`);
+    return await callGeminiJSON(apiKey, sys, JSON.stringify({
+      current_value_proposition: currentVP || 'Not established by this article.',
+      candidate_insight: extras.candidate_insight || null,
+      research: research || null,
+      research_relevance: extras.research_relevance || (research ? 'strong' : 'none'),
+    }));
   }
 
-  // ---- Option 2 (Research Article) -- reuses buildFVPC() above once it has a Current VP ----
+  // Optional Business Model Canvas extension (Evy's prompt, section 9): only when asked for
+  async function buildBMC(apiKey, currentVP, fvpc, research){
+    const sys = stagePrompt(`STAGE: Business Model Canvas extension (requested by the user). Generate a PROVISIONAL nine-block Business Model Canvas exploring how the emerging value proposition could affect the business model. Keep it distinct from the FVPC. Do not produce an implementation plan or prescribe an innovation strategy, and do not claim the business model is validated.
 
-  async function understandResearch(apiKey, articleText){
-    const sys = `You are AURORA, reading an uploaded research article. Return ONLY valid JSON with exactly these four keys, each a short 1-2 sentence string: research_question, main_theory, method, findings.
-
-research_question = what the researchers wanted to understand.
-main_theory = the main idea or theoretical lens used.
-method = how the research was carried out.
-findings = what they found and why it matters.
-
-Base every field on the text provided. Do not invent details not implied by the text.`;
-    return await callGeminiJSON(apiKey, sys, articleText);
+Return JSON:
+{
+  "blocks": {"customer_segments": [...], "value_propositions": [...], "channels": [...], "customer_relationships": [...], "revenue_streams": [...], "key_activities": [...], "key_resources": [...], "key_partners": [...], "cost_structure": [...]},
+  "key_implications": ["...", "..."],
+  "largest_viability_assumptions": ["..."],
+  "desirability": "1-2 sentences",
+  "feasibility": "1-2 sentences",
+  "viability": "1-2 sentences"
+}
+- Each block is an array of up to 3 objects {"text": "...", "basis": "brief" | "research" | "hypothesis"}. Link an element to the user's material or the research where it genuinely comes from; otherwise label it "hypothesis".
+- key_implications: only the 2-3 most consequential implications for the business model.
+- largest_viability_assumptions: 1-3 of the largest assumptions that would have to hold.
+- desirability, feasibility, viability: discuss each briefly, without claiming proof.`);
+    return await callGeminiJSON(apiKey, sys, JSON.stringify({ current_value_proposition: currentVP || 'Not established', future_value_proposition_canvas: fvpc, research: research || null }));
   }
 
-  async function practicalImplications(apiKey, understanding){
-    const sys = `You are AURORA, translating academic research into practical business insight. Given this research understanding JSON, return ONLY valid JSON with exactly these three keys, each an array of 2-4 short phrases: management_implications, policy_implications, entrepreneurial_implications.`;
-    return await callGeminiJSON(apiKey, sys, JSON.stringify(understanding));
+  // ---- Route 2: published research article to practical insights (Evy's prompt, section 7) ----
+
+  async function analyseArticle(apiKey, articleText){
+    const sys = stagePrompt(`STAGE: Route 2, published research article to practical insights.
+Read the supplied article text. If the text is not the article itself, or does not contain enough of it to establish its findings (for example only a title, a link, an abstract fragment or unrelated text), do NOT pretend to have read it: set article_available to false and explain briefly in unavailable_reason.
+
+Return JSON:
+{
+  "article_available": true or false,
+  "unavailable_reason": string or null,
+  "citation": {"authors": string or null, "year": string or null, "title": string or null, "journal": string or null},
+  "central_finding": "the main finding in plain language, including what kind of research supports it (for example a multi-case study, survey or experiment)",
+  "business_impact": "why this research matters to business practice or policymaking and what its potential implications could be",
+  "fresh_perspective": "what conventional assumption the research might challenge, what alternative understanding it offers, or what customer-value opportunity it suggests",
+  "boundary": "when the findings may not transfer to another organisation, customer group or market",
+  "illustrative_example": string or null
+}
+- citation: fill only what the text itself states; otherwise null.
+- central_finding is the article's own finding; business_impact and fresh_perspective are your interpretation of it. Keep that distinction in the wording.
+- illustrative_example: optional, a brief real-world-style example that is clearly illustrative, never presented as a documented case. null if not useful.
+Each text field at most 60 words. Do not write a lengthy academic synopsis.`);
+    return await callGeminiJSON(apiKey, sys, String(articleText).slice(0, 60000));
   }
 
-  async function inferIllustrativeVP(apiKey, understanding, implications){
-    const sys = `You are AURORA. No specific organisation's document was uploaded here -- only a research article. Infer a plausible, illustrative Current Value Proposition for a representative organisation this research's findings would be relevant to today, before applying these findings. Return ONLY valid JSON with exactly these six keys, each an array of 2-4 short phrases: customer_jobs, customer_pains, customer_gains, products_services, pain_relievers, gain_creators.
-
-Ground this in the research understanding and practical implications provided -- it should read as a believable "before" state that the research's findings would meaningfully change, not a generic template.`;
-    return await callGeminiJSON(apiKey, sys, JSON.stringify({ research_understanding: understanding, practical_implications: implications }));
+  async function classroomActivity(apiKey, analysis){
+    const sys = stagePrompt(`STAGE: Teaching. Design ONE short classroom activity based on the article described in the input, for business or entrepreneurship students. Ground it only in the findings reported in the input; do not add facts about the article.
+Return JSON: {"title": "...", "learning_outcome": "one sentence", "duration_minutes": number, "steps": ["...", "...", "..."], "discussion_questions": ["...", "..."]}
+3-5 steps, 2-3 discussion questions, each at most 35 words. Include one step where students challenge an assumption the article questions, and say where the findings might not transfer.`);
+    return await callGeminiJSON(apiKey, sys, JSON.stringify(analysis));
   }
 
   function currentVPCanvasHtml(vp){
@@ -1029,52 +1215,13 @@ Ground this in the research understanding and practical implications provided --
     ].map(([label, items]) => `<div class="canvas-cell"><h4>${label}</h4>${listHtml(items)}</div>`).join('') + `</div>`;
   }
 
-  function renderKeyInsights(themes, notes){
-    document.getElementById('kiContent').innerHTML =
-      `<div class="impl-box"><h4>Search themes</h4>${listHtml(themes)}</div>
-       <div class="impl-box"><h4>Match reasoning log</h4>${listHtml(notes)}</div>`;
-  }
-
-  function renderResearch(research, notes){
-    const el = document.getElementById('rfContent');
-    if (!research){
-      el.innerHTML = `<div class="research-card"><span class="jrnl">NO MATCH</span>
-        <div style="font-size:12px;color:var(--text-muted);">No genuinely relevant Kingston-affiliated research was found for this challenge.</div>
-      </div><div class="impl-box"><h4>Search log</h4>${listHtml(notes)}</div>`;
-      return;
-    }
-    const abs34 = ABS_3_4_JOURNALS.has((research.journal||'').toLowerCase());
-    el.innerHTML = `<div class="research-card">
-        <span class="jrnl">${abs34 ? 'ABS 3/4 JOURNAL' : 'NOT ON ABS 3/4 ALLOWLIST'}</span>
-        <div style="font-size:13px;font-weight:600;margin-bottom:6px;">${escapeHtml(research.title)}</div>
-        <div class="caption">${escapeHtml(research.journal)} · ${research.year||''}</div>
-        <div class="caption" style="margin-top:6px;">${escapeHtml((research.authors||[]).join(', '))}</div>
-        ${research.oa_pdf_url ? `<div class="caption" style="margin-top:6px;"><a href="${research.oa_pdf_url}" target="_blank" style="color:var(--a2-ink);">Open access PDF →</a></div>` : ''}
-      </div><div class="impl-box"><h4>Search log</h4>${listHtml(notes)}</div>`;
-  }
-
-  function renderRASummary(understanding){
-    document.getElementById('raSummaryContent').innerHTML = `
-      <div class="mini-field"><span class="mini-label">Research question</span>${escapeHtml(understanding.research_question)}</div>
-      <div class="mini-field"><span class="mini-label">Main theory</span>${escapeHtml(understanding.main_theory)}</div>
-      <div class="mini-field"><span class="mini-label">Method</span>${escapeHtml(understanding.method)}</div>
-      <div class="mini-field"><span class="mini-label">Findings</span>${escapeHtml(understanding.findings)}</div>`;
-  }
-
-  function renderRAImplications(implications){
-    document.getElementById('raImplContent').innerHTML = `
-      <div class="impl-box"><h4>Management Implications</h4>${listHtml(implications.management_implications)}</div>
-      <div class="impl-box"><h4>Policy Implications</h4>${listHtml(implications.policy_implications)}</div>
-      <div class="impl-box"><h4>Entrepreneurial Implications</h4>${listHtml(implications.entrepreneurial_implications)}</div>`;
-  }
-
   const STAGE_META = [
-    { label: 'Hidden User Insights', icon: 'i-insight', color: '#0E9A6C' },
-    { label: 'Future Pains', icon: 'i-alert', color: '#2E8F82' },
-    { label: 'Future Gains / User Foresights', icon: 'i-trend', color: '#4C7FA6' },
-    { label: 'Mental Model Shifts', icon: 'i-shift', color: '#6D46E8' },
-    { label: 'Future Worlds', icon: 'i-globe', color: '#4F6FD9' },
-    { label: 'Impact Opportunities', icon: 'i-target', color: '#2E6FE0' },
+    { num: 7, label: 'Hidden User Insights', icon: 'i-insight', color: '#0E9A6C' },
+    { num: 8, label: 'Future Pains', icon: 'i-alert', color: '#2E8F82' },
+    { num: 9, label: 'Future Gains / User Foresights', icon: 'i-trend', color: '#4C7FA6' },
+    { num: 10, label: 'Mental Model Shifts', icon: 'i-shift', color: '#6D46E8' },
+    { num: 11, label: 'Future Worlds', icon: 'i-globe', color: '#4F6FD9' },
+    { num: 12, label: 'Impact Opportunities', icon: 'i-target', color: '#2E6FE0' },
   ];
 
   async function renderFvpc(){
@@ -1130,7 +1277,7 @@ Ground this in the research understanding and practical implications provided --
 
       const step = document.createElement('div');
       step.className = 'fvpc-step';
-      step.innerHTML = `<div class="fvpc-num">${i+2}</div><div><h4>${escapeHtml(meta.label)}</h4>${listHtml(items)}${reasoning ? `<div class="fvpc-why"><span class="why-label">Why</span> — ${escapeHtml(reasoning)}</div>` : ''}</div>`;
+      step.innerHTML = `<div class="fvpc-num">${i+2}</div><div><h4>${escapeHtml(meta.label)}</h4>${listHtml(items)}${reasoning ? `<div class="fvpc-why"><span class="why-label">Why</span> - ${escapeHtml(reasoning)}</div>` : ''}</div>`;
       flowEl.appendChild(step);
 
       const cell = document.createElement('div');
@@ -1144,28 +1291,30 @@ Ground this in the research understanding and practical implications provided --
   // ---- Real exports off whatever's actually in AURORA_STATE -- no fake downloads ----
 
   function getFvpcExportData(){
-    if (!AURORA_STATE.fvpc || !AURORA_STATE.currentVP) return null;
-    const vp = AURORA_STATE.currentVP;
+    if (!AURORA_STATE.fvpc) return null;
+    const vp = AURORA_STATE.currentVP; // null for a Route 2 canvas: current value proposition not established
     const f = AURORA_STATE.fvpc;
     const projTag = document.getElementById('fvpcProjTag');
     const project = (projTag && projTag.textContent) || 'AURORA Project';
 
     const stageDefs = [
-      ['Hidden User Insights', f.hidden_user_insights],
-      ['Future Pains', f.future_pains],
-      ['Future Gains / User Foresights', f.future_gains_user_foresights],
-      ['Mental Model Shifts', f.mental_model_shifts],
-      ['Future Worlds', f.future_worlds],
-      ['Impact Opportunities', f.impact_opportunities],
+      ['7. Hidden User Insights', f.hidden_user_insights],
+      ['8. Future Pains', f.future_pains],
+      ['9. Future Gains / User Foresights', f.future_gains_user_foresights],
+      ['10. Mental Model Shifts', f.mental_model_shifts],
+      ['11. Future Worlds', f.future_worlds],
+      ['12. Impact Opportunities', f.impact_opportunities],
     ];
 
     const sections = [{
-      heading: 'Current Value Proposition',
-      lines: [].concat(
-        (vp.customer_jobs||[]).map(t => 'Job: ' + t),
-        (vp.customer_pains||[]).map(t => 'Pain: ' + t),
-        (vp.customer_gains||[]).map(t => 'Gain: ' + t),
-        (vp.products_services||[]).map(t => 'Offer: ' + t)
+      heading: 'Current Value Proposition (1-6)',
+      lines: !vp ? ['Not established by this article.'] : [].concat(
+        (vp.customer_jobs||[]).map(t => 'Customer job: ' + t),
+        (vp.customer_pains||[]).map(t => 'Customer pain: ' + t),
+        (vp.customer_gains||[]).map(t => 'Customer gain: ' + t),
+        (vp.products_services||[]).map(t => 'Product or service: ' + t),
+        (vp.pain_relievers||[]).map(t => 'Pain reliever: ' + t),
+        (vp.gain_creators||[]).map(t => 'Gain creator: ' + t)
       ),
       reasoning: null,
     }];
@@ -1173,13 +1322,35 @@ Ground this in the research understanding and practical implications provided --
     stageDefs.forEach(([label, data]) => {
       const items = Array.isArray(data) ? data : ((data && data.items) || []);
       const reasoning = Array.isArray(data) ? null : (data && data.reasoning);
-      sections.push({ heading: label, lines: items, reasoning });
+      sections.push({ heading: label, lines: items.length ? items : ['Not established.'], reasoning });
     });
+
+    const fvps = Array.isArray(f.future_value_propositions) ? f.future_value_propositions : [];
+    if (fvps.length){
+      sections.push({
+        heading: 'Future Value Propositions (hypotheses to test)',
+        lines: [].concat.apply([], fvps.map((v, i) => [
+          (fvps.length > 1 ? 'Opportunity ' + (i + 1) + ' - ' : '') + 'Customer insight: ' + v.customer_insight,
+          'Future value proposition: ' + v.future_value_proposition,
+          'Future products and services: ' + v.future_products_services,
+          'Research foundation: ' + v.research_foundation,
+        ])),
+        reasoning: null,
+      });
+    }
+    const ev = f.smallest_evidence_check;
+    if (ev && (ev.uncertainty || ev.check)){
+      sections.push({
+        heading: 'Smallest useful evidence check',
+        lines: [ev.uncertainty ? 'Biggest uncertainty: ' + ev.uncertainty : null, ev.check ? 'A way to check it: ' + ev.check : null, 'Illustrative, not statistically conclusive.'].filter(Boolean),
+        reasoning: null,
+      });
+    }
 
     if (AURORA_STATE.research){
       sections.push({
         heading: 'Supporting Research',
-        lines: [AURORA_STATE.research.title, [AURORA_STATE.research.journal, AURORA_STATE.research.year].filter(Boolean).join(' · ')].filter(Boolean),
+        lines: [AURORA_STATE.research.title, (AURORA_STATE.research.authors || []).slice(0, 3).join(', '), [AURORA_STATE.research.journal, AURORA_STATE.research.year].filter(Boolean).join(' · ')].filter(Boolean),
         reasoning: null,
       });
     }
@@ -1335,7 +1506,7 @@ Ground this in the research understanding and practical implications provided --
     if (existing) existing.remove();
     const toast = document.createElement('div');
     toast.className = 'validation-toast';
-    toast.textContent = "Free-form replies aren't wired up in this prototype yet — AURORA follows the step-by-step flow above.";
+    toast.textContent = "Free-form replies aren't wired up in this prototype yet. AURORA follows the step-by-step flow above.";
     paneConvo.appendChild(toast);
     requestAnimationFrame(() => toast.classList.add('show'));
     setTimeout(() => {
@@ -1383,7 +1554,7 @@ Ground this in the research understanding and practical implications provided --
   }
   function paperReviewIntroHtml(recommendedIndex, recommendedReason, isRelevant){
     if (isRelevant === false){
-      return `Here's the closest match I could find — worth flagging that it's a stretch, not a strong citation.` +
+      return `Here's the closest match I could find, though it's a stretch rather than a strong citation.` +
         (recommendedReason ? `<div class="mini-field"><span class="mini-label">Why it's a stretch</span>${escapeHtml(recommendedReason)}</div>` : '');
     }
     return `Here are the strongest candidates I found. I've gone with the one bordered below.` +
@@ -1398,7 +1569,7 @@ Ground this in the research understanding and practical implications provided --
     const metaParts = [authorStr, journal + (abs34 ? ' · ABS 3/4' : ''), w.publication_year || ''].filter(Boolean);
     const card = document.createElement('div');
     card.className = 'paper-option' + (isRecommended ? ' recommended' : '') + (isActive ? ' active' : '');
-    card.innerHTML = `<h5>${escapeHtml(w.title)}${isRecommended ? '<span class="paper-badge">AURORA recommends</span>' : ''}${isActive ? '<span class="active-badge">Active</span>' : ''}</h5>
+    card.innerHTML = `<h5>${escapeHtml(w.title)}${isRecommended ? '<span class="paper-badge">AI recommends</span>' : ''}${isActive ? '<span class="active-badge">Active</span>' : ''}</h5>
       <div class="paper-meta">${escapeHtml(metaParts.join(' · '))}</div>
       <div class="paper-snippet">${escapeHtml(abstract.slice(0,150))}${abstract.length>150?'…':''}</div>
       ${isActive ? '' : `<div class="paper-select-row"><span class="qr-chip action">Use this paper</span></div>`}`;
@@ -1411,7 +1582,7 @@ Ground this in the research understanding and practical implications provided --
   function buildNoneCard(isActive, onSelect){
     const card = document.createElement('div');
     card.className = 'paper-option' + (isActive ? ' active' : '');
-    card.innerHTML = `<h5>None of these — continue without a citation${isActive ? '<span class="active-badge">Active</span>' : ''}</h5>` +
+    card.innerHTML = `<h5>None of these: continue without a citation${isActive ? '<span class="active-badge">Active</span>' : ''}</h5>` +
       (isActive ? '' : `<div class="paper-select-row"><span class="qr-chip action">Use this</span></div>`);
     if (!isActive){
       card.querySelector('.paper-select-row .qr-chip').onclick = () => onSelect(null);
@@ -1464,13 +1635,8 @@ Ground this in the research understanding and practical implications provided --
     li.classList.remove('pending'); li.classList.add('done');
     li.querySelector('.mark').innerHTML = '<svg class="icon"><use href="#i-check"/></svg>';
   }
-  function summarizeVpAsText(vp){
-    const job = (vp.customer_jobs && vp.customer_jobs[0]) || '';
-    const pain = (vp.customer_pains && vp.customer_pains[0]) || '';
-    return `A short summary: the organisation is trying to ${escapeHtml((job||'').toLowerCase())}, with a key pain being "${escapeHtml(pain)}".<span class="workspace-hint">Full breakdown mapped in the Live Workspace</span>`;
-  }
   function buildFvpcButtonHtml(fnName){
-    return `<div class="quick-reply-row"><span class="qr-chip primary action" onclick="${fnName || 'startFvpcBuild'}()">Build the Future Value Proposition →</span></div>`;
+    return `<div class="quick-reply-row"><span class="qr-chip primary action" onclick="this.parentNode.remove();${fnName || 'startFvpcBuild'}()">Build the Future Value Proposition →</span></div>`;
   }
 
   function openWorkspaceBC(){
@@ -1482,44 +1648,135 @@ Ground this in the research understanding and practical implications provided --
     runAuroraPipelineRA();
   }
 
+  // ---- Rendering helpers. FVPC labels and order are preserved: 1-6 current, 7-9 discovery, 10-12 creation ----
+
+  const VP_CELLS = [
+    ['1. Customer Jobs', 'customer_jobs'], ['2. Customer Pains', 'customer_pains'], ['3. Customer Gains', 'customer_gains'],
+    ['4. Products &amp; Services', 'products_services'], ['5. Pain Relievers', 'pain_relievers'], ['6. Gain Creators', 'gain_creators'],
+  ];
+  const NOT_ESTABLISHED = 'Not established by this article.';
+
+  function basisTag(b){ return b === 'brief' ? 'From your brief' : (b === 'research' ? 'Research' : ''); }
+  // Only items traceable to the user's material or the research get a tag. Untagged items are
+  // AURORA's interpretations or hypotheses (explained once in the canvas footer, no coding system on show).
+  function listWithBasisHtml(items, basis){
+    if (!items || !items.length) return '<div class="caption">Not established.</div>';
+    return '<ul class="real-list">' + items.map((t, i) => {
+      const b = basis && basis[i];
+      const tag = basisTag(b);
+      return '<li>' + escapeHtml(t) + (tag ? ` <span class="basis-tag ${b}">${tag}</span>` : '') + '</li>';
+    }).join('') + '</ul>';
+  }
+  function stageParts(data){
+    const isArr = Array.isArray(data);
+    return {
+      items: isArr ? data : ((data && data.items) || []),
+      basis: isArr ? [] : ((data && data.basis) || []),
+      reasoning: isArr ? null : (data && data.reasoning),
+    };
+  }
+
+  function currentBeliefHtml(vp){
+    const belief = vp.current_belief
+      ? `<div class="mini-field"><span class="mini-label">What the business currently believes</span>${escapeHtml(vp.current_belief)}</div>`
+      : `Here's where things stand today.`;
+    const assumptions = (vp.working_assumptions || []).filter(Boolean);
+    const assumeHtml = assumptions.length
+      ? `<div class="caption" style="margin-top:8px;">Working assumption${assumptions.length > 1 ? 's' : ''}: ${assumptions.map(escapeHtml).join(' ')}</div>` : '';
+    return `Let's unravel it.` + belief + assumeHtml + currentVPCanvasHtml(vp);
+  }
+
+  function overlookedHtml(ov){
+    ov = ov || {};
+    let h = `<div class="mini-field"><span class="mini-label">What might be overlooked</span>${escapeHtml(ov.problem_framing || '')}</div>`;
+    const cp = ov.customer_perspective || {};
+    const rows = [
+      ['Values and beliefs', cp.values_and_beliefs], ['Emotional responses', cp.emotional_responses],
+      ['Current experience', cp.current_experience], ['Future needs and aspirations', cp.future_needs_aspirations],
+    ];
+    const have = rows.filter(r => r[1]);
+    const lack = rows.filter(r => !r[1]).map(r => r[0].toLowerCase());
+    if (have.length){
+      h += `<div class="mini-field"><span class="mini-label">What your material says about the customer</span>` +
+        have.map(r => `<div>${r[0]}: ${escapeHtml(r[1])}</div>`).join('') + `</div>`;
+    }
+    if (lack.length){
+      h += `<div class="caption" style="margin-top:8px;">Not in your material, so I haven't guessed: ${lack.join(', ')}.</div>`;
+    }
+    if (ov.candidate_insight){
+      h += `<div class="mini-field"><span class="mini-label">A possible insight (a hypothesis to test)</span><em>${escapeHtml(ov.candidate_insight)}</em></div>`;
+    } else if (ov.no_new_perspective_reason){
+      h += `<div class="mini-field"><span class="mini-label">Anything new?</span>Nothing material seems overlooked from this material alone. ${escapeHtml(ov.no_new_perspective_reason)}</div>`;
+    }
+    const how = (ov.how_to_find_out || []).filter(Boolean);
+    if (how.length){
+      h += `<div class="mini-field"><span class="mini-label">Ways to find out</span>${listHtml(how)}</div>`;
+    }
+    return h;
+  }
+
+  function researchSuggestsHtml(a, relevance, scope){
+    if (!a) return 'Continuing without a research citation. The Future Value Proposition will rest on your material alone, and will say so.';
+    const notes = [];
+    if (relevance === 'weak') notes.push('Provisional: this is the closest match I found, but it is a stretch.');
+    if (scope === 'external') notes.push('No suitable Kingston study came up, so this is work from outside Kingston.');
+    return (notes.length ? `<div class="caption" style="margin-bottom:6px;">${notes.map(escapeHtml).join(' ')}</div>` : '')
+      + `<div class="mini-field"><span class="mini-label">What research suggests</span>${escapeHtml(a.finding)}${a.context ? ` <span class="caption">(${escapeHtml(a.context)})</span>` : ''}</div>`
+      + `<div class="mini-field"><span class="mini-label">What it could mean for you (my interpretation)</span>${escapeHtml(a.challenge)}</div>`
+      + `<div class="mini-field"><span class="mini-label">A limit</span>${escapeHtml(a.limit)}</div>`;
+  }
+
+  function researchPayload(){
+    const r = AURORA_STATE.research;
+    if (!r) return null;
+    if (r.kind === 'article') return Object.assign({}, r, { analysis: AURORA_STATE.researchInsight || null });
+    return {
+      title: r.title, authors: (r.authors || []).slice(0, 6), year: r.year, journal: r.journal,
+      abstract: String(r.abstract || '').slice(0, 1500),
+      source_scope: AURORA_STATE.researchScope, analysis: AURORA_STATE.researchInsight || null,
+    };
+  }
+
+  // ---- Canvas, future value propositions, evidence check ----
+
+  function stageCellHtml(meta, p){
+    return `<div class="template-cell" style="--stage-color:${meta.color};">
+        <div class="template-cell-head"><svg class="icon stage-icon"><use href="#${meta.icon}"/></svg><h5>${meta.num}. ${escapeHtml(meta.label)}</h5></div>
+        ${listWithBasisHtml(p.items, p.basis)}
+        ${p.reasoning ? `<div class="fvpc-why-template"><span class="why-tag">What's changing</span>${escapeHtml(p.reasoning)}</div>` : ''}
+      </div>`;
+  }
+
   function inlineFvpcHtml(vp, f){
+    const notEst = !vp;
     const stageData = [
       f.hidden_user_insights, f.future_pains, f.future_gains_user_foresights,
       f.mental_model_shifts, f.future_worlds, f.impact_opportunities,
     ];
-    const stages = STAGE_META.map((meta, i) => {
-      const data = stageData[i];
-      const items = Array.isArray(data) ? data : ((data && data.items) || []);
-      const reasoning = Array.isArray(data) ? null : (data && data.reasoning);
-      return { meta, items, reasoning };
-    });
-    const nowCells = [
-      ['Customer Jobs', vp.customer_jobs], ['Customer Pains', vp.customer_pains],
-      ['Customer Gains', vp.customer_gains], ['Products &amp; Services', vp.products_services],
-      ['Pain Relievers', vp.pain_relievers], ['Gain Creators', vp.gain_creators],
-    ];
-    const fpData = f.future_pains;
-    const fpItems = Array.isArray(fpData) ? fpData : ((fpData && fpData.items) || []);
+    const cells = STAGE_META.map((meta, i) => stageCellHtml(meta, stageParts(stageData[i])));
+    const nowHtml = VP_CELLS.map(([label, key]) =>
+      `<div class="template-now-cell"><h6>${label}</h6>${notEst ? `<div class="caption">${NOT_ESTABLISHED}</div>` : listHtml(vp[key])}</div>`).join('');
+    const fpItems = stageParts(f.future_pains).items;
+    const painsHtml = notEst ? '' : `
+        <div class="pains-compare">
+          <div class="pains-compare-col"><h6 class="pains-compare-label then">Pains today</h6>${listHtml(vp.customer_pains)}</div>
+          <div class="pains-compare-arrow"><svg class="icon"><use href="#i-chevron"/></svg></div>
+          <div class="pains-compare-col"><h6 class="pains-compare-label now">Pains tomorrow</h6>${listHtml(fpItems)}</div>
+        </div>`;
 
     return `<div class="template-card" style="max-width:none;margin-top:8px;">
         <div class="template-header">
-          <div class="template-brand"><div class="orb" style="width:18px;height:18px;"></div>Future Value Proposition</div>
+          <div class="template-brand"><div class="orb" style="width:18px;height:18px;"></div>Future Value Proposition Canvas</div>
         </div>
-        <div class="template-now-label">Today</div>
-        <div class="template-now-grid">${nowCells.map(([label, items]) =>
-          `<div class="template-now-cell"><h6>${label}</h6>${listHtml(items)}</div>`).join('')}</div>
-        <div class="pains-compare">
-          <div class="pains-compare-col"><h6 class="pains-compare-label then">Pains — Today</h6>${listHtml(vp.customer_pains)}</div>
-          <div class="pains-compare-arrow"><svg class="icon"><use href="#i-chevron"/></svg></div>
-          <div class="pains-compare-col"><h6 class="pains-compare-label now">Pains — Tomorrow</h6>${listHtml(fpItems)}</div>
-        </div>
+        <div class="template-now-label">Current Value Proposition</div>
+        <div class="template-now-grid">${nowHtml}</div>
+        ${painsHtml}
         <div class="template-arc-divider"><span>Becomes</span></div>
-        <div class="template-grid">${stages.map(({meta, items, reasoning}) => `
-          <div class="template-cell" style="--stage-color:${meta.color};">
-            <div class="template-cell-head"><svg class="icon stage-icon"><use href="#${meta.icon}"/></svg><h5>${escapeHtml(meta.label)}</h5></div>
-            ${listHtml(items)}
-            ${reasoning ? `<div class="fvpc-why-template"><span class="why-tag">What's changing</span>${escapeHtml(reasoning)}</div>` : ''}
-          </div>`).join('')}</div>
+        <div class="template-now-label">Future Customer Discovery</div>
+        <div class="template-grid">${cells.slice(0, 3).join('')}</div>
+        <div class="template-now-label" style="margin-top:16px;">Future Value Creation</div>
+        <div class="template-grid">${cells.slice(3).join('')}</div>
+        <div class="canvas-legend">Items marked <span class="basis-tag brief">From your brief</span> or <span class="basis-tag research">Research</span> can be traced to those sources. Everything else is AURORA's interpretation or a hypothesis to test with customers, not a validated need.</div>
         <div class="template-footer">Generated by AURORA · Kingston University London</div>
       </div>
       <div class="fvpc-actions" style="margin-top:16px;">
@@ -1529,6 +1786,91 @@ Ground this in the research understanding and practical implications provided --
       </div>`;
   }
 
+  function futureValuePropsHtml(f){
+    const list = Array.isArray(f.future_value_propositions) ? f.future_value_propositions : [];
+    if (!list.length){
+      const miss = (f.missing_evidence || []).filter(Boolean);
+      return `I can't see a well-supported new value proposition in this material yet, and I'd rather say so than invent one. The canvas below shows what the material can and cannot support.` +
+        (miss.length ? `<div class="mini-field"><span class="mini-label">What is still missing</span>${listHtml(miss)}</div>` : '');
+    }
+    return `Here is the new value that might emerge. Treat each as a hypothesis to test, not a finding.` + list.map((v, i) => `
+      <div class="impl-box" style="margin-top:12px;">
+        <h4>${list.length > 1 ? 'Opportunity ' + (i + 1) + ': ' : ''}Customer insight (hypothesis)</h4><div>${escapeHtml(v.customer_insight)}</div>
+        <h4 style="margin-top:10px;">Future value proposition</h4><div>${escapeHtml(v.future_value_proposition)}</div>
+        <h4 style="margin-top:10px;">Future products and services</h4><div>${escapeHtml(v.future_products_services)}</div>
+        <h4 style="margin-top:10px;">Research foundation</h4><div>${escapeHtml(v.research_foundation)}</div>
+      </div>`).join('');
+  }
+
+  function evidenceAndNextHtml(f){
+    const e = f.smallest_evidence_check || {};
+    const miss = (f.missing_evidence || []).filter(Boolean);
+    const qs = (f.business_model_questions || []).filter(Boolean);
+    let h = '';
+    if (e.uncertainty || e.check){
+      h += `<div class="impl-box"><h4>The smallest useful evidence check</h4>` +
+        (e.uncertainty ? `<div><b>Biggest uncertainty.</b> ${escapeHtml(e.uncertainty)}</div>` : '') +
+        (e.check ? `<div style="margin-top:6px;"><b>A way to check it.</b> ${escapeHtml(e.check)}</div>` : '') +
+        `<div class="caption" style="margin-top:6px;">Illustrative, not statistically conclusive.</div></div>`;
+    }
+    if (miss.length) h += `<div class="mini-field"><span class="mini-label">Evidence still missing</span>${listHtml(miss)}</div>`;
+    if (qs.length) h += `<div class="mini-field"><span class="mini-label">Questions this raises for the business model</span>${listHtml(qs)}</div>`;
+    h += `<div class="quick-reply-row"><span class="qr-chip action" onclick="this.remove();startBmc()">Explore business model implications</span></div>`;
+    return h;
+  }
+
+  async function renderFvpcOutputs(msg, vp, fvpc){
+    setMessageBody(msg, futureValuePropsHtml(fvpc));
+    await sleep(500);
+    appendMessage('ai', null, inlineFvpcHtml(vp, fvpc));
+    await sleep(500);
+    appendMessage('ai', null, evidenceAndNextHtml(fvpc));
+  }
+
+  const BMC_BLOCKS = [
+    ['Customer Segments', 'customer_segments'], ['Value Propositions', 'value_propositions'], ['Channels', 'channels'],
+    ['Customer Relationships', 'customer_relationships'], ['Revenue Streams', 'revenue_streams'], ['Key Activities', 'key_activities'],
+    ['Key Resources', 'key_resources'], ['Key Partners', 'key_partners'], ['Cost Structure', 'cost_structure'],
+  ];
+  function bmcHtml(b){
+    const blocks = b.blocks || {};
+    const cells = BMC_BLOCKS.map(([label, key]) => {
+      const entries = (blocks[key] || []).map(e => (typeof e === 'string' ? { text: e, basis: 'hypothesis' } : e));
+      return `<div class="template-cell" style="--stage-color:#6D46E8;"><div class="template-cell-head"><h5>${label}</h5></div>${listWithBasisHtml(entries.map(e => e.text), entries.map(e => e.basis))}</div>`;
+    }).join('');
+    const imp = (b.key_implications || []).filter(Boolean);
+    const via = (b.largest_viability_assumptions || []).filter(Boolean);
+    return `A provisional sketch of how this could touch the business model. It is a way to ask better questions, not a validated model.
+      <div class="template-card" style="max-width:none;margin-top:10px;">
+        <div class="template-header"><div class="template-brand"><div class="orb" style="width:18px;height:18px;"></div>Business Model Canvas (provisional)</div></div>
+        <div class="template-grid">${cells}</div>
+        <div class="canvas-legend">Untagged entries are hypotheses.</div>
+      </div>
+      ${imp.length ? `<div class="mini-field"><span class="mini-label">The most consequential implications</span>${listHtml(imp)}</div>` : ''}
+      ${via.length ? `<div class="mini-field"><span class="mini-label">Largest viability assumptions</span>${listHtml(via)}</div>` : ''}
+      <div class="mini-field"><span class="mini-label">Desirability</span>${escapeHtml(b.desirability || '')}</div>
+      <div class="mini-field"><span class="mini-label">Feasibility</span>${escapeHtml(b.feasibility || '')}</div>
+      <div class="mini-field"><span class="mini-label">Viability</span>${escapeHtml(b.viability || '')}</div>`;
+  }
+
+  async function startBmc(){
+    if (!AURORA_STATE.fvpc) return;
+    const apiKey = document.getElementById('geminiKeyInput').value.trim();
+    const msg = appendMessage('ai', null, '<span class="thinking">Sketching a provisional Business Model Canvas…</span>');
+    try {
+      let bmc = AURORA_STATE.bmc;
+      if (!bmc){
+        bmc = await buildBMC(apiKey, AURORA_STATE.currentVP, AURORA_STATE.fvpc, researchPayload());
+        AURORA_STATE.bmc = bmc;
+      }
+      setMessageBody(msg, bmcHtml(bmc));
+    } catch (err) {
+      setMessageBody(msg, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
+    }
+  }
+
+  // ---- Route 1 build step ----
+
   async function startFvpcBuild(){
     if (!AURORA_STATE.currentVP) return;
     const apiKey = document.getElementById('geminiKeyInput').value.trim();
@@ -1536,31 +1878,14 @@ Ground this in the research understanding and practical implications provided --
     try {
       let fvpc = AURORA_STATE.fvpc;
       if (!fvpc){
-        fvpc = await buildFVPC(apiKey, AURORA_STATE.currentVP, AURORA_STATE.research);
+        const ov = AURORA_STATE.overlooked;
+        fvpc = await buildFVPC(apiKey, AURORA_STATE.currentVP, researchPayload(), {
+          candidate_insight: (ov && ov.candidate_insight) || null,
+          research_relevance: AURORA_STATE.research ? AURORA_STATE.researchRelevance : 'none',
+        });
         AURORA_STATE.fvpc = fvpc;
       }
-      setMessageBody(msg, inlineFvpcHtml(AURORA_STATE.currentVP, fvpc));
-    } catch (err) {
-      setMessageBody(msg, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
-    }
-  }
-
-  async function startFvpcBuildFromArticle(){
-    if (!AURORA_STATE.raUnderstanding || !AURORA_STATE.raImplications) return;
-    const apiKey = document.getElementById('geminiKeyInput').value.trim();
-    const msg = appendMessage('ai', null, '<span class="thinking">Inferring an illustrative Current Value Proposition, then synthesizing the Future Value Proposition…</span>');
-    try {
-      let fvpc = AURORA_STATE.fvpc;
-      let currentVP = AURORA_STATE.currentVP;
-      if (!fvpc){
-        currentVP = await inferIllustrativeVP(apiKey, AURORA_STATE.raUnderstanding, AURORA_STATE.raImplications);
-        AURORA_STATE.currentVP = currentVP;
-        const researchPayload = Object.assign({ title: 'Uploaded research article' }, AURORA_STATE.raUnderstanding, AURORA_STATE.raImplications);
-        AURORA_STATE.research = researchPayload;
-        fvpc = await buildFVPC(apiKey, currentVP, researchPayload);
-        AURORA_STATE.fvpc = fvpc;
-      }
-      setMessageBody(msg, inlineFvpcHtml(currentVP, fvpc));
+      await renderFvpcOutputs(msg, AURORA_STATE.currentVP, fvpc);
     } catch (err) {
       setMessageBody(msg, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
     }
@@ -1572,76 +1897,152 @@ Ground this in the research understanding and practical implications provided --
     const text = document.getElementById('challengeInput').value.trim();
     const log = document.getElementById('pipelineLog');
     log.innerHTML = '';
-    AURORA_STATE.currentVP = null; AURORA_STATE.research = null; AURORA_STATE.researchNotes = []; AURORA_STATE.fvpc = null;
+    resetAuroraState();
 
     if (!text){ showValidationToast('No challenge text to work from.'); return; }
     appendMessage('user', null, escapeHtml(text));
-    if (!apiKey){ showValidationToast('Enter a Gemini API key in the top bar first.'); return; }
+    if (!apiKey){ showValidationToast(missingKeyMessage()); return; }
+    AURORA_STATE.brief = text;
 
     try {
-      // Direct: witty opener + the analysis itself, no separate 'understand vs map' split
+      // A. What the business currently believes
       let currentVP;
       await pacedMessage(null, 'Reading the challenge…', 900, async () => {
         currentVP = await mapCurrentVP(apiKey, text);
         AURORA_STATE.currentVP = currentVP;
-        return `Let's unravel it. Here's where things stand today.` + currentVPCanvasHtml(currentVP);
+        return currentBeliefHtml(currentVP);
       });
 
-      // One smart research gate, replacing the old separate 'identify the main challenge' step
+      // B. What might be overlooked
+      await pacedMessage(null, 'Looking for what might be overlooked…', 900, async () => {
+        const ov = await analyseOverlooked(apiKey, text, currentVP);
+        AURORA_STATE.overlooked = ov;
+        return overlookedHtml(ov);
+      });
+
+      // C. Research, only when the user asks for it
       const msgResearch = await pacedMessage(null, '…', 600,
-        "Want a second opinion — from the research? I can pull genuinely relevant work from Kingston's own output to sharpen this.");
+        "Want a second opinion, from the research? I'll look at Kingston's own work first and see whether it challenges or sharpens this.");
       const choiceResearch = await waitForChoice(msgResearch.querySelector('.bubble'),
         [{label:'Yes, bring in research', value:'yes', primary:true}, {label:'Not now', value:'skip'}]);
       appendMessage('user', null, choiceResearch === 'yes' ? 'Yes, bring in research' : 'Not now');
 
       if (choiceResearch === 'yes'){
         await sleep(450);
-        // Checklist itself is the "thinking" indicator; pace each checkmark
         const msg6 = appendMessage('ai', null, checklistTemplate());
-        const themes = await extractThemes(apiKey, currentVP);
+        const themes = await extractThemes(apiKey, currentVP, AURORA_STATE.overlooked);
         markChecklistDone(msg6, 0);
         await sleep(400);
         const kingstonId = await resolveKingstonId();
-        const { shortlist, recommendedIndex, recommendedReason, isRelevant, notes } = await searchAndRankResearch(apiKey, themes, currentVP, kingstonId, async stage => {
+        const { shortlist, recommendedIndex, recommendedReason, isRelevant, notes, scope } = await searchAndRankResearch(apiKey, themes, currentVP, kingstonId, async stage => {
           if (stage === 'searched'){ markChecklistDone(msg6, 1); await sleep(400); }
           if (stage === 'reranked'){ markChecklistDone(msg6, 2); await sleep(400); }
           if (stage === 'selected'){ markChecklistDone(msg6, 3); await sleep(300); }
         });
+        AURORA_STATE.researchScope = scope || 'kingston';
+        AURORA_STATE.researchNotes = notes;
 
-        let research = null;
         let reviewMsg = null;
+        let suggestMsg = null;
+        let suggestToken = 0;
 
-        function applySelection(idx){
-          research = idx !== null ? formatWork(shortlist[idx]) : null;
-          AURORA_STATE.research = research;
-          AURORA_STATE.fvpc = null; // stale -- rebuild next time it's requested
-          if (reviewMsg){
-            renderPaperCards(reviewMsg.querySelector('.paper-cards-slot'), shortlist, idx, recommendedIndex, applySelection);
+        async function refreshSuggestion(idx){
+          const token = ++suggestToken;
+          if (!suggestMsg) suggestMsg = appendMessage('ai', null, '');
+          if (idx === null){
+            AURORA_STATE.researchInsight = null;
+            AURORA_STATE.researchRelevance = 'none';
+            setMessageBody(suggestMsg, researchSuggestsHtml(null));
+            return;
+          }
+          const relevance = idx === recommendedIndex ? (isRelevant ? 'strong' : 'weak') : 'user_chosen';
+          AURORA_STATE.researchRelevance = relevance;
+          setMessageBody(suggestMsg, '<span class="thinking">Reading this paper against your challenge…</span>');
+          try {
+            const a = await analysePaper(apiKey, currentVP, AURORA_STATE.overlooked, formatWork(shortlist[idx]), AURORA_STATE.researchScope);
+            if (token !== suggestToken) return; // a newer pick superseded this one
+            AURORA_STATE.researchInsight = a;
+            setMessageBody(suggestMsg, researchSuggestsHtml(a, relevance, AURORA_STATE.researchScope));
+          } catch (err) {
+            if (token !== suggestToken) return;
+            setMessageBody(suggestMsg, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
           }
         }
 
+        function applySelection(idx){
+          AURORA_STATE.research = idx !== null ? formatWork(shortlist[idx]) : null;
+          AURORA_STATE.researchInsight = null;
+          AURORA_STATE.fvpc = null; // stale, rebuild when requested
+          AURORA_STATE.bmc = null;
+          if (reviewMsg){
+            renderPaperCards(reviewMsg.querySelector('.paper-cards-slot'), shortlist, idx, recommendedIndex, applySelection);
+          }
+          refreshSuggestion(idx);
+        }
+
         if (shortlist.length === 0){
-          await pacedMessage(null, '…', 400, 'No OpenAlex results came back for any of the search themes.');
+          AURORA_STATE.research = null; AURORA_STATE.researchRelevance = 'none';
+          await pacedMessage(null, '…', 400, 'No research came back for any of the search themes, so I will not cite any.');
         } else {
           await sleep(450);
           reviewMsg = appendMessage('ai', null, paperReviewIntroHtml(recommendedIndex, recommendedReason, isRelevant) + '<div class="paper-cards-slot"></div>');
           renderPaperCards(reviewMsg.querySelector('.paper-cards-slot'), shortlist, recommendedIndex, recommendedIndex, applySelection);
-          research = recommendedIndex !== null ? formatWork(shortlist[recommendedIndex]) : null;
+          AURORA_STATE.research = formatWork(shortlist[recommendedIndex]);
+          await refreshSuggestion(recommendedIndex);
         }
-
-        AURORA_STATE.research = research; AURORA_STATE.researchNotes = notes;
 
         await sleep(450);
         await pacedMessage(null, '…', 500,
-          'These findings feed directly into the Future Value Proposition below.' + buildFvpcButtonHtml());
+          'Ready when you are. I will build the Future Value Proposition from the above.' + buildFvpcButtonHtml());
       } else {
         await pacedMessage(null, '…', 500,
-          'No problem — you can still build the Future Value Proposition from the Current Value Proposition alone.' + buildFvpcButtonHtml());
+          'No problem. I can still build the Future Value Proposition from your material alone, and I will say where it has no research behind it.' + buildFvpcButtonHtml());
       }
     } catch (err) {
       appendMessage('ai', null, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
       console.error(err);
     }
+  }
+
+  // ---- Route 2: research article ----
+
+  let RA_NEEDS_ROUTE_CONFIRM = false;
+
+  function articleReadingHtml(a){
+    if (!a.article_available){
+      return `I can't tell you what this article says: ${escapeHtml(a.unavailable_reason || 'the text I have does not contain enough of it.')} I'd rather not pretend to have read it. Go back to Home and add the full text, or upload the PDF with the + button, and I'll start again.`;
+    }
+    const c = a.citation || {};
+    const cite = [c.authors, c.year, c.title].filter(Boolean).join(' · ');
+    return (cite ? `<div class="caption" style="margin-bottom:6px;">${escapeHtml(cite)}</div>` : '')
+      + `<div class="mini-field"><span class="mini-label">The central finding</span>${escapeHtml(a.central_finding)}</div>`
+      + `<div class="mini-field"><span class="mini-label">Why it matters for business</span>${escapeHtml(a.business_impact)}</div>`
+      + `<div class="mini-field"><span class="mini-label">A fresh perspective (my interpretation)</span>${escapeHtml(a.fresh_perspective)}</div>`
+      + `<div class="mini-field"><span class="mini-label">A boundary</span>${escapeHtml(a.boundary)}</div>`
+      + (a.illustrative_example ? `<div class="mini-field"><span class="mini-label">Illustrative example (not a real case)</span>${escapeHtml(a.illustrative_example)}</div>` : '');
+  }
+
+  function articleResearchPayload(a){
+    const c = a.citation || {};
+    return {
+      kind: 'article', title: c.title || 'Uploaded research article',
+      authors: c.authors ? [c.authors] : [], year: c.year || null, journal: c.journal || null,
+      central_finding: a.central_finding, business_impact: a.business_impact,
+      fresh_perspective: a.fresh_perspective, boundary: a.boundary, source_scope: 'user_supplied',
+    };
+  }
+  function articleAsWork(a){
+    const c = a.citation || {};
+    return { title: c.title || 'Uploaded research article', authors: c.authors ? [c.authors] : [], year: c.year, journal: c.journal,
+      abstract: [a.central_finding, a.fresh_perspective, a.boundary].filter(Boolean).join(' ') };
+  }
+
+  function raOfferChipsHtml(){
+    return `What would you like to do with it?<div class="quick-reply-row">
+      <span class="qr-chip primary action" onclick="this.remove();raApplyToBusiness()">Apply it to a particular business</span>
+      <span class="qr-chip action" onclick="this.remove();raClassroomActivity()">Create a classroom activity</span>
+      <span class="qr-chip action" onclick="this.remove();startFvpcBuildFromArticle()">Map it onto the Future Value Proposition Canvas</span>
+    </div>`;
   }
 
   async function runAuroraPipelineRA(){
@@ -1650,41 +2051,156 @@ Ground this in the research understanding and practical implications provided --
     const articleText = document.getElementById('articleInput').value.trim();
     const log = document.getElementById('pipelineLogRA');
     log.innerHTML = '';
-    AURORA_STATE.currentVP = null; AURORA_STATE.research = null; AURORA_STATE.fvpc = null;
-    AURORA_STATE.raUnderstanding = null; AURORA_STATE.raImplications = null;
+    resetAuroraState();
 
     if (!articleText){ showValidationToast('No article text to work from.'); return; }
     appendMessage('user', null, escapeHtml(articleText.length > 600 ? articleText.slice(0, 600) + '…' : articleText));
-    if (!apiKey){ showValidationToast('Enter a Gemini API key in the top bar first.'); return; }
+    if (!apiKey){ showValidationToast(missingKeyMessage()); return; }
 
     try {
-      // Step 2 -- real work
-      let understanding;
+      // Home guessed the route from the text: confirm before going further (one short question)
+      if (RA_NEEDS_ROUTE_CONFIRM){
+        RA_NEEDS_ROUTE_CONFIRM = false;
+        const confirmMsg = await pacedMessage(null, '…', 500, 'This reads like a published research article, so I will take it through the article route. Is that right?');
+        const route = await waitForChoice(confirmMsg.querySelector('.bubble'),
+          [{label:'Yes, read it as an article', value:'ra', primary:true}, {label:"No, it's a business challenge", value:'bc'}]);
+        appendMessage('user', null, route === 'ra' ? 'Yes, read it as an article' : "No, it's a business challenge");
+        if (route === 'bc'){
+          showView('workspaceBC');
+          document.getElementById('challengeInput').value = articleText;
+          runAuroraPipeline();
+          return;
+        }
+      }
+
+      // Honest handling of a bare link: the browser cannot open it, so do not pretend to have read it
+      if (/^(https?:\/\/\S+|10\.\d{4,9}\/\S+)$/i.test(articleText)){
+        await pacedMessage(null, '…', 500, "I can't open links from this prototype, and I won't pretend to have read the article. Go back to Home and paste the text or upload the PDF with the + button, and I'll take it from there.");
+        return;
+      }
+
+      let analysis;
       await pacedMessage(null, 'Reading the article…', 900, async () => {
-        understanding = await understandResearch(apiKey, articleText);
-        AURORA_STATE.raUnderstanding = understanding;
-        return `<div class="mini-field"><span class="mini-label">Research question</span>${escapeHtml(understanding.research_question)}</div>
-                <div class="mini-field"><span class="mini-label">Main theory</span>${escapeHtml(understanding.main_theory)}</div>
-                <div class="mini-field"><span class="mini-label">Method</span>${escapeHtml(understanding.method)}</div>
-                <div class="mini-field"><span class="mini-label">Findings</span>${escapeHtml(understanding.findings)}</div>`;
+        analysis = await analyseArticle(apiKey, articleText);
+        AURORA_STATE.articleAnalysis = analysis;
+        return articleReadingHtml(analysis);
       });
+      if (!analysis.article_available) return;
 
-      // Step 3 -- real work
-      let implications;
-      await pacedMessage(null, 'Translating into practical implications…', 800, async () => {
-        implications = await practicalImplications(apiKey, understanding);
-        AURORA_STATE.raImplications = implications;
-        return 'Translated into management, policy and entrepreneurial implications.';
-      });
-
-      // Step 4
-      await pacedMessage(null, '…', 500,
-        'Mapping these findings onto an illustrative Current Value Proposition, then Hidden User Insights, Future Pains, Future Gains / User Foresights, Mental Model Shifts, Future Worlds and Impact Opportunities.' +
-        buildFvpcButtonHtml('startFvpcBuildFromArticle'));
+      await pacedMessage(null, '…', 500, raOfferChipsHtml());
     } catch (err) {
       appendMessage('ai', null, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
       console.error(err);
     }
+  }
+
+  function raApplyToBusiness(){
+    ACTIVE_LOG_ID = 'pipelineLogRA';
+    const msg = appendMessage('ai', null,
+      `Tell me about the business. A sentence or two is enough, or paste a brief.
+       <div class="inline-form"><textarea class="inline-textarea" rows="3" placeholder="e.g. A regional hospital trust whose referral process is slow and error-prone…"></textarea>
+       <div class="quick-reply-row"><span class="qr-chip primary action">Apply the findings</span></div></div>`);
+    const ta = msg.querySelector('textarea');
+    msg.querySelector('.qr-chip').onclick = () => {
+      const t = ta.value.trim();
+      if (!t){ ta.focus(); return; }
+      msg.querySelector('.inline-form').remove();
+      runArticleOnBusiness(t);
+    };
+    ta.focus();
+  }
+
+  async function runArticleOnBusiness(text){
+    ACTIVE_LOG_ID = 'pipelineLogRA';
+    const apiKey = document.getElementById('geminiKeyInput').value.trim();
+    const a = AURORA_STATE.articleAnalysis;
+    if (!a) return;
+    appendMessage('user', null, escapeHtml(text.length > 600 ? text.slice(0, 600) + '…' : text));
+    if (!apiKey){ showValidationToast(missingKeyMessage()); return; }
+    AURORA_STATE.fvpc = null; AURORA_STATE.bmc = null; AURORA_STATE.brief = text;
+    try {
+      let vp;
+      await pacedMessage(null, 'Reading the business…', 900, async () => {
+        vp = await mapCurrentVP(apiKey, text);
+        AURORA_STATE.currentVP = vp;
+        return currentBeliefHtml(vp);
+      });
+      await pacedMessage(null, 'Looking for what might be overlooked…', 900, async () => {
+        const ov = await analyseOverlooked(apiKey, text, vp);
+        AURORA_STATE.overlooked = ov;
+        return overlookedHtml(ov);
+      });
+      AURORA_STATE.research = articleResearchPayload(a);
+      AURORA_STATE.researchScope = 'user_supplied';
+      AURORA_STATE.researchRelevance = 'user_supplied';
+      await pacedMessage(null, 'Reading the article against this business…', 900, async () => {
+        const an = await analysePaper(apiKey, vp, AURORA_STATE.overlooked, articleAsWork(a), 'user_supplied');
+        AURORA_STATE.researchInsight = an;
+        return researchSuggestsHtml(an, 'user_supplied', 'user_supplied');
+      });
+      await pacedMessage(null, '…', 500, 'Ready when you are. I will build the Future Value Proposition from the above.' + buildFvpcButtonHtml());
+    } catch (err) {
+      appendMessage('ai', null, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
+      console.error(err);
+    }
+  }
+
+  async function raClassroomActivity(){
+    ACTIVE_LOG_ID = 'pipelineLogRA';
+    const apiKey = document.getElementById('geminiKeyInput').value.trim();
+    const a = AURORA_STATE.articleAnalysis;
+    if (!a) return;
+    const msg = appendMessage('ai', null, '<span class="thinking">Designing a classroom activity…</span>');
+    try {
+      const act = await classroomActivity(apiKey, a);
+      setMessageBody(msg, `<div class="mini-field"><span class="mini-label">Classroom activity${act.duration_minutes ? ' · about ' + escapeHtml(act.duration_minutes) + ' minutes' : ''}</span><b>${escapeHtml(act.title)}</b></div>`
+        + `<div class="mini-field"><span class="mini-label">Learning outcome</span>${escapeHtml(act.learning_outcome)}</div>`
+        + `<div class="mini-field"><span class="mini-label">Steps</span><ol class="real-list" style="padding-left:18px;">${(act.steps || []).map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ol></div>`
+        + `<div class="mini-field"><span class="mini-label">Discussion questions</span>${listHtml(act.discussion_questions)}</div>`);
+    } catch (err) {
+      setMessageBody(msg, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
+    }
+  }
+
+  async function startFvpcBuildFromArticle(){
+    ACTIVE_LOG_ID = 'pipelineLogRA';
+    const a = AURORA_STATE.articleAnalysis;
+    if (!a || !a.article_available) return;
+    const apiKey = document.getElementById('geminiKeyInput').value.trim();
+    const msg = appendMessage('ai', null, '<span class="thinking">Mapping the article onto the canvas…</span>');
+    try {
+      // The article cannot establish any organisation's current value proposition, so it stays "Not established".
+      AURORA_STATE.currentVP = null; AURORA_STATE.overlooked = null; AURORA_STATE.bmc = null;
+      AURORA_STATE.research = articleResearchPayload(a);
+      AURORA_STATE.researchScope = 'user_supplied'; AURORA_STATE.researchRelevance = 'user_supplied'; AURORA_STATE.researchInsight = null;
+      const fvpc = await buildFVPC(apiKey, null, researchPayload(), { research_relevance: 'user_supplied' });
+      AURORA_STATE.fvpc = fvpc;
+      await renderFvpcOutputs(msg, null, fvpc);
+    } catch (err) {
+      setMessageBody(msg, `<span style="color:#E0796B;">Error: ${escapeHtml(err.message)}</span>`);
+    }
+  }
+
+  function resetAuroraState(){
+    AURORA_STATE.currentVP = null; AURORA_STATE.overlooked = null; AURORA_STATE.research = null;
+    AURORA_STATE.researchInsight = null; AURORA_STATE.researchScope = null; AURORA_STATE.researchRelevance = 'none';
+    AURORA_STATE.researchNotes = []; AURORA_STATE.fvpc = null; AURORA_STATE.bmc = null;
+    AURORA_STATE.articleAnalysis = null; AURORA_STATE.brief = null;
+  }
+
+  // Heuristic route guess from Home: a lone link/DOI, or text with several academic markers
+  function looksLikeResearchArticle(text){
+    const t = String(text).trim();
+    if (/^(https?:\/\/\S+|10\.\d{4,9}\/\S+)$/i.test(t)) return true;
+    if (t.length < 800) return false;
+    let score = 0;
+    if (/\babstract\b/i.test(t)) score++;
+    if (/\breferences\b|\bbibliography\b/i.test(t)) score++;
+    if (/\bet al\.?/i.test(t)) score++;
+    if (/\bdoi\b|10\.\d{4,9}\//i.test(t)) score++;
+    if (/\b(this (study|paper|article)|our (findings|results|analysis)|we (find|argue|propose|examine|contribute)|literature review|research questions?)\b/i.test(t)) score++;
+    if ((t.match(/\([^()]{3,60}\b(19|20)\d{2}[a-z]?\)/g) || []).length >= 3) score++;
+    return score >= 3;
   }
 
   // ---- Home landing page: cycling placeholder, auto-resize, submit ----
@@ -1736,7 +2252,8 @@ Ground this in the research understanding and practical implications provided --
       input.focus();
       return;
     }
-    const mode = 'bc'; // mode picker removed for now -- Research Article stays reachable via My Projects / Library
+    const mode = looksLikeResearchArticle(text) ? 'ra' : 'bc'; // route guessed from the text; the article route asks to confirm
+    RA_NEEDS_ROUTE_CONFIRM = (mode === 'ra');
     input.value = '';
     document.getElementById('homeFileInputStatus').textContent = '';
 
